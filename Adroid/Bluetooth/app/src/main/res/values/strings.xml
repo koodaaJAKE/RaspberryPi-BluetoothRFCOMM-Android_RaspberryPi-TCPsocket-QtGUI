@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Bluetooth</string>
+    <string name="SetOnBluetooth">Set On Bluetooth</string>
+    <string name="SetOffBluetooth">Set Off Bluetooth</string>
+    <string name="Query">Query</string>
+    <string name="DiscoverDevices">Discover Devices</string>
+    <string name="Connect">Connect</string>
+    <string name="Send">Send</string>
+    <string name="Receive">Receive</string>
+    <string name="Visible">Visible</string>
+    <string name="Exit">Exit</string>
+    <string name="ClientConnection">Client Connection</string>
+    <string name="ServerConnection">Server Connection</string>
+    <string name="Cancel">Cancel</string>
+    <string name="Accept">Accept</string>
+    <string name="Run">Run</string>
+    <string name="Hello">Hello</string>
+    <string name="CloseConnection">Close Connection</string>
+    <string name="SendSomeText">Send Some Text</string>
+    <string name="ReadSensorData">Read Sensor Data</string>
+    <string name="Distance">Distance</string>
+    <string name="Velocity">Velocity</string>
+    <string name="ClearText">Clear Text</string>
+</resources>

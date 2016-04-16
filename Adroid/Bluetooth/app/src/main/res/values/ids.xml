@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="scanning" type="id">Scanning for devices...</item>
+    <item name="bluetooth" type="id">Bluetooth</item>
+    <item name="server" type="id">Bluetooth Server</item>
+    <item name="client" type="id">Bluetooth Client</item>
+    <item name="choose" type="id">Choose connection method</item>
+</resources>

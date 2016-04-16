@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/bluetooth"
+    android:descendantFocusability="blocksDescendants">
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/discovered_device_list"
+        android:background="@android:color/transparent"
+        android:cacheColorHint="@android:color/transparent"
+        android:divider="#000000"
+        android:dividerHeight="1dp" >
+    </ListView>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/paired_device_list"
+        android:background="@android:color/transparent"
+        android:cacheColorHint="@android:color/transparent"
+        android:divider="#000000"
+        android:dividerHeight="1dp" >
+
+    </ListView>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/SetOnBluetooth"
+        android:id="@+id/SetOnBluetoothButton"
+        android:layout_alignParentBottom="true"
+        android:layout_alignLeft="@+id/SetOffBluetoothButton"
+        android:layout_alignStart="@+id/SetOffBluetoothButton" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/SetOffBluetooth"
+        android:id="@+id/SetOffBluetoothButton"
+        android:layout_above="@+id/SetOnBluetoothButton"
+        android:layout_centerHorizontal="true"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Query"
+        android:id="@+id/QueryButton"
+        android:layout_toRightOf="@+id/SetOnBluetoothButton"
+        android:layout_alignTop="@+id/SetOnBluetoothButton" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/DiscoverDevices"
+        android:id="@+id/DiscoverDevicesButton"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/SetOffBluetoothButton" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Visible"
+        android:id="@+id/VisibleButton"
+        android:layout_above="@+id/DiscoverDevicesButton"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Exit"
+        android:id="@+id/ExitButton"
+        android:layout_toLeftOf="@+id/SetOnBluetoothButton"
+        android:layout_alignTop="@+id/SetOnBluetoothButton"/>
+
+</RelativeLayout>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/raspberrypilogo"
+    tools:context="com.example.jake.bluetooth.BluetoothServerActivity">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Connect"
+        android:id="@+id/ConnectButton"
+        android:layout_marginBottom="170dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ReadSensorData"
+        android:id="@+id/ReadSensorDataButton"
+        android:layout_above="@+id/ConnectButton"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/SendSomeText"
+        android:id="@+id/SendSomeTextButton"
+        android:layout_toStartOf="@+id/ConnectButton"
+        android:layout_toLeftOf="@+id/ConnectButton"
+        android:layout_alignTop="@+id/ConnectButton" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Hello"
+        android:id="@+id/HelloButton"
+        android:layout_below="@+id/SendSomeTextButton"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/CloseConnection"
+        android:id="@+id/CloseConnectionButton"
+        android:layout_alignTop="@+id/ConnectButton"
+        android:layout_toRightOf="@+id/ConnectButton"
+        android:layout_toEndOf="@+id/ConnectButton"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/Distance"
+        android:id="@+id/DistanceTextView"
+        android:gravity="center_horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/ConnectButton"
+        android:layout_toStartOf="@+id/ConnectButton"
+        android:layout_marginTop="25dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/Velocity"
+        android:id="@+id/VelocityTextView"
+        android:gravity="center_horizontal"
+        android:layout_alignTop="@+id/DistanceTextView"
+        android:layout_toRightOf="@+id/ConnectButton"
+        android:layout_toEndOf="@+id/ConnectButton" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:id="@+id/editText"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/CloseConnectionButton"
+        android:layout_alignEnd="@+id/CloseConnectionButton"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/HelloButton" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text=" "
+        android:id="@+id/distanceValueView"
+        android:layout_below="@+id/DistanceTextView"
+        android:layout_toLeftOf="@+id/ReadSensorDataButton"
+        android:layout_toStartOf="@+id/ReadSensorDataButton" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text=" "
+        android:id="@+id/velocityValueView"
+        android:layout_below="@+id/VelocityTextView"
+        android:layout_toRightOf="@+id/ReadSensorDataButton"
+        android:layout_toEndOf="@+id/ReadSensorDataButton"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ClearText"
+        android:id="@+id/ClearTextButton"
+        android:layout_above="@+id/ReadSensorDataButton"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>
