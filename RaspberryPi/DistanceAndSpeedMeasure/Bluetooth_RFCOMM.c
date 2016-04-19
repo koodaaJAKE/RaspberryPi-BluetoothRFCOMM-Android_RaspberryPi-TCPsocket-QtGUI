@@ -21,7 +21,7 @@ int bluetoothRFCOMM_Client(void)
 
     /*
      * UUID:
-     * 00001101-0000-1000-8000-00805F9B34F
+     * 00001101-0000-1000-8000-00805F9B34FB
      */
     uint8_t svc_uuid_int[] = { 0x00, 0x00, 0x11, 0x01, 0x00, 0x00, 0x10, 0x00,
       0x80, 0x00, 0x00, 0x80, 0x5F, 0x9B, 0x34, 0xFB };
@@ -103,22 +103,19 @@ int bluetoothRFCOMM_Client(void)
     	printf("Choose which Bluetooth device connect to:\n");
     	scanf("%d", &UserInput);
     	printf("\n");
+
+        /*
+         * Start the Bluetooth RFCOMM Client service and pass it the chosen Bluetooth device address
+         */
+        bluetoothRFCOMM_ClientConnect(addr_array[UserInput-1], svc_uuid_int);
     }
     else
     {
     	printf("No Bluetooth devices found\n");
-    	exit(EXIT_FAILURE);
-        free( ii );
-        close( sock );
     }
 
-    /*
-     * Start the Bluetooth RFCOMM Client service and pass it the chosen Bluetooth device address
-     */
-    bluetoothRFCOMM_ClientConnect(addr_array[UserInput-1], svc_uuid_int);
-
-    free( ii );
-    close( sock );
+    free(ii);
+    close(sock);
     return 0;
 }
 
@@ -130,8 +127,6 @@ int bluetoothRFCOMM_ClientConnect(const char *target_addr, uint8_t svc_uuid_int[
     sdp_list_t *response_list = NULL, *search_list, *attrid_list;
     sdp_session_t *session = 0;
     bool socketCloseFlag = false;
-	unsigned char recvBuffer[1024] = { 0 };
-	unsigned char sendBuffer[1024] = { 0 };
 	HRLVEZ0_Data_t bluetoothHRLVEZ0_Data;
 	unsigned char *serializationPtr;
 	struct sockaddr_rc addr = { 0 };
@@ -232,6 +227,9 @@ int bluetoothRFCOMM_ClientConnect(const char *target_addr, uint8_t svc_uuid_int[
 	 */
 	while(socketCloseFlag == false)
 	{
+		unsigned char recvBuffer[128] = { 0 };
+		unsigned char sendBuffer[128] = { 0 };
+
 		printf("Waiting bytes to read.............\n");
 		bytes_read = read(s, recvBuffer, sizeof(recvBuffer));
 		if(bytes_read <= 0){
@@ -247,6 +245,7 @@ int bluetoothRFCOMM_ClientConnect(const char *target_addr, uint8_t svc_uuid_int[
 
 				socketCloseFlag = true;
 				printDisconnect();
+				printf("Closing the socket...\n");
 				sleep(1);
 				break;
 
@@ -281,8 +280,8 @@ int bluetoothRFCOMM_ClientConnect(const char *target_addr, uint8_t svc_uuid_int[
 					int k;
 					for(k = 0 ; k <= 13 ; k++){
 						printf("buf[%d]: %X \t", k, sendBuffer[k]);
-						printf("\n");
 					}
+					printf("\n");
 				}
 				break;
 
@@ -331,8 +330,6 @@ int bluetoothRFCOMM_Server(void)
 	int port = 3, result, sock, client, bytes_read, bytes_sent;
 	struct sockaddr_rc loc_addr = { 0 }, rem_addr = { 0 };
 	char buffer[1024] = { 0 };
-	unsigned char recvBuffer[1024] = { 0 };
-	unsigned char sendBuffer[1024] = { 0 };
 	socklen_t opt = sizeof(rem_addr);
 	bool socketCloseFlag = false;
 	HRLVEZ0_Data_t bluetoothHRLVEZ0_Data;
@@ -373,6 +370,9 @@ int bluetoothRFCOMM_Server(void)
 	 */
 	while(socketCloseFlag == false)
 	{
+		unsigned char recvBuffer[128] = { 0 };
+		unsigned char sendBuffer[128] = { 0 };
+
 		printf("Waiting bytes to read.............\n");
 		bytes_read = read(client, recvBuffer, sizeof(recvBuffer));
 		if(bytes_read <= 0){
@@ -388,6 +388,7 @@ int bluetoothRFCOMM_Server(void)
 
 				socketCloseFlag = true;
 				printDisconnect();
+				printf("Closing the socket...\n");
 				sleep(1);
 				break;
 
@@ -422,8 +423,8 @@ int bluetoothRFCOMM_Server(void)
 
 					for(k = 0 ; k < 13 ; k++){
 						printf("buf[%d]: %X \t",k, sendBuffer[k]);
-						printf("\n");
 					}
+					printf("\n");
 				}
 				break;
 

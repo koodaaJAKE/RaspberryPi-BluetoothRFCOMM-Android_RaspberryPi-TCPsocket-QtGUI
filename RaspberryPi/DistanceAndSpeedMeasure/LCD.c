@@ -195,6 +195,7 @@ int printLongString_LCD(char *pstring, size_t len)
 				perror("Write failed -");
 			}
 
+			//Jump to next line
 			setCursor_LCD(2,1);
 
 			data2[0] = 0x01;
@@ -239,6 +240,7 @@ int printLongString_LCD(char *pstring, size_t len)
 				perror("Write failed -");
 			}
 
+			//Jump to next line
 			setCursor_LCD(2,1);
 
 			data2[0] = 0x01;
@@ -256,6 +258,7 @@ int printLongString_LCD(char *pstring, size_t len)
 				perror("Write failed -");
 			}
 
+			//Jump to next line
 			setCursor_LCD(3,1);
 
 			data3[0] = 0x01;
@@ -300,6 +303,7 @@ int printLongString_LCD(char *pstring, size_t len)
 				perror("Write failed -");
 			}
 
+			//Jump to next line
 			setCursor_LCD(2,1);
 
 			data2[0] = 0x01;
@@ -317,6 +321,7 @@ int printLongString_LCD(char *pstring, size_t len)
 				perror("Write failed -");
 			}
 
+			//Jump to next line
 			setCursor_LCD(3,1);
 
 			data3[0] = 0x01;
@@ -333,6 +338,7 @@ int printLongString_LCD(char *pstring, size_t len)
 				perror("Write failed -");
 			}
 
+			//Jump to next line
 			setCursor_LCD(4,1);
 
 			data4[0] = 0x01;
