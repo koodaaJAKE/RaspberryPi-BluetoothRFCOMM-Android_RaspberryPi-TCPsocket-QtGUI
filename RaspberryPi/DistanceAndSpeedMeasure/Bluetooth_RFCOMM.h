@@ -35,10 +35,6 @@ typedef enum { false, true } bool;
 
 /* Function prototypes */
 int bluetoothRFCOMM_Client(void);
-int bluetoothRFCOMM_ClientConnect(const char *target_addr, uint8_t svc_uuid_int[]);
-int hex_to_int(char c);
-int hex_to_ascii(char c, char d);
 int bluetoothRFCOMM_Server(void);
-sdp_session_t *registerService(uint8_t rfcomm_channel);
 
 #endif /* BLUETOOTH_RFCOMM_H_ */

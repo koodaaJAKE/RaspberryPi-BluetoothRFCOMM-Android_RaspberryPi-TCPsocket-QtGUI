@@ -6,8 +6,15 @@
  */
 #include "LCD.h"
 
-/* Global file descriptor variable */
-int g_fd;
+/* Static function declarations */
+static int printSpeed_LCD(char* pstring, size_t len);
+static int printDistance_LCD(char *pstring, size_t len);
+
+/* Global static variable of serial file descriptor */
+static int g_fd;
+
+/* Global static variable of bytes written */
+static int g_bytesWritten;
 
 /* Open serial port and set the settings */
 int setupLCD_Serial(void)
@@ -19,7 +26,8 @@ int setupLCD_Serial(void)
 
     if (g_fd == -1)
     {
-            perror("Error - Unable to open UART!\n");
+    	perror("Error - Unable to open UART!\n");
+        return -1;
     }
 
     struct termios options;
@@ -29,6 +37,7 @@ int setupLCD_Serial(void)
     if(error == -1)
     {
     	perror("tcgetattr error!\n");
+    	return -1;
     }
 
     options.c_cflag = B9600 | CS8 | CLOCAL | CREAD; //Baud rate 9600, Character size mask CS8, Ignore modem control lines, Enable receiver
@@ -43,6 +52,7 @@ int setupLCD_Serial(void)
     if(error == -1)
     {
     	perror("tcflush error!\n");
+    	return -1;
     }
 
     /* Apply the configuration */
@@ -50,8 +60,23 @@ int setupLCD_Serial(void)
     if(error == -1)
     {
     	perror("tcsetattr error!\n");
+    	return -1;
     }
     return 0;
+}
+
+/* Close the serial */
+int serialLCD_Close(void)
+{
+    int statusVal;
+    statusVal = close(g_fd);
+
+    if(statusVal < 0)
+    {
+    	perror("Could not close serial device");
+    	return -1;
+    }
+    return statusVal;
 }
 
 /* Clears LCD display */
@@ -61,11 +86,12 @@ int clear_LCD(void)
 	data[0] = 4;
 	data[1] = 0xFF;
 
-	int g_n = write(g_fd, &data, sizeof(data));
+	g_bytesWritten = write(g_fd, &data, sizeof(data));
 
-	if (g_n < 0)
+	if (g_bytesWritten < 0)
 	{
 		perror("Write failed - ");
+		return -1;
 	}
 	return 0;
 }
@@ -79,11 +105,12 @@ int setType_LCD(const unsigned char line, const unsigned char col)
 	data[2] = col;
 	data[3] = 0xFF;
 
-    int g_n = write(g_fd, &data, sizeof(data));
+	g_bytesWritten = write(g_fd, &data, sizeof(data));
 
-    if (g_n < 0)
+    if (g_bytesWritten < 0)
     {
-            perror("Write failed - ");
+    	perror("Write failed - ");
+        return -1;
     }
     return 0;
 }
@@ -96,11 +123,12 @@ int setBacklight_LCD(const unsigned char brightness)
 	data[1] = brightness;
 	data[2] = 0xFF;
 
-    int g_n =  write(g_fd, &data, sizeof(data));
+	g_bytesWritten =  write(g_fd, &data, sizeof(data));
 
-    if (g_n < 0)
+    if (g_bytesWritten < 0)
     {
     	perror("Write failed - ");
+    	return -1;
     }
     return 0;
 }
@@ -114,11 +142,12 @@ int setCursor_LCD(const unsigned char line, const unsigned char col)
 	data[2] = col;
 	data[3] = 0xFF;
 
-    int g_n = write(g_fd, &data, sizeof(data));
+	g_bytesWritten = write(g_fd, &data, sizeof(data));
 
-    if (g_n < 0)
+    if (g_bytesWritten < 0)
     {
-            perror("Write failed - ");
+    	perror("Write failed - ");
+        return -1;
     }
     return 0;
 }
@@ -131,11 +160,12 @@ int writeChar_LCD(const unsigned char c)
 	data[1] = c;
 	data[2] = 0xFF;
 
-	int g_n = write(g_fd, &data, sizeof(data));
+	g_bytesWritten = write(g_fd, &data, sizeof(data));
 
-	if (g_n < 0)
+	if (g_bytesWritten < 0)
 	{
 		perror("Write failed -");
+		return -1;
 	}
 	return 0;
 }
@@ -143,7 +173,6 @@ int writeChar_LCD(const unsigned char c)
 /* Print long string to a lcd */
 int printLongString_LCD(char *pstring, size_t len)
 {
-	int g_n;
 	size_t i;
 
 		/*
@@ -163,10 +192,11 @@ int printLongString_LCD(char *pstring, size_t len)
 			data[len+1] = '\0';
 			data[len+2] = 0xFF;
 
-			g_n = write(g_fd, &data, sizeof(data));
-			if (g_n < 0)
+			g_bytesWritten = write(g_fd, &data, sizeof(data));
+			if (g_bytesWritten < 0)
 			{
 				perror("Write failed -");
+				return -1;
 			}
 
 		}
@@ -189,10 +219,11 @@ int printLongString_LCD(char *pstring, size_t len)
 			data[17] = '\0';
 			data[18] = 0xFF;
 
-			g_n = write(g_fd, &data, sizeof(data));
-			if (g_n < 0)
+			g_bytesWritten = write(g_fd, &data, sizeof(data));
+			if (g_bytesWritten < 0)
 			{
 				perror("Write failed -");
+				return -1;
 			}
 
 			//Jump to next line
@@ -207,10 +238,11 @@ int printLongString_LCD(char *pstring, size_t len)
 			data2[(len-15)] = '\0';
 			data2[(len-15)+1] = 0xFF;
 
-			g_n = write(g_fd, &data2, sizeof(data2));
-			if (g_n < 0)
+			g_bytesWritten = write(g_fd, &data2, sizeof(data2));
+			if (g_bytesWritten < 0)
 			{
 				perror("Write failed -");
+				return -1;
 			}
 
 		}
@@ -234,10 +266,11 @@ int printLongString_LCD(char *pstring, size_t len)
 			data[17] = '\0';
 			data[18] = 0xFF;
 
-			g_n = write(g_fd, &data, sizeof(data));
-			if (g_n < 0)
+			g_bytesWritten = write(g_fd, &data, sizeof(data));
+			if (g_bytesWritten < 0)
 			{
 				perror("Write failed -");
+				return -1;
 			}
 
 			//Jump to next line
@@ -252,10 +285,11 @@ int printLongString_LCD(char *pstring, size_t len)
 			data2[17] = '\0';
 			data2[18] = 0xFF;
 
-			g_n = write(g_fd, &data2, sizeof(data2));
-			if (g_n < 0)
+			g_bytesWritten = write(g_fd, &data2, sizeof(data2));
+			if (g_bytesWritten < 0)
 			{
 				perror("Write failed -");
+				return -1;
 			}
 
 			//Jump to next line
@@ -269,10 +303,11 @@ int printLongString_LCD(char *pstring, size_t len)
 			data3[len-31] = '\0';
 			data3[len-31+1] = 0xFF;
 
-			g_n = write(g_fd, &data3, sizeof(data3));
-			if (g_n < 0)
+			g_bytesWritten = write(g_fd, &data3, sizeof(data3));
+			if (g_bytesWritten < 0)
 			{
 				perror("Write failed -");
+				return -1;
 			}
 
 		}
@@ -297,10 +332,11 @@ int printLongString_LCD(char *pstring, size_t len)
 			data[17] = '\0';
 			data[18] = 0xFF;
 
-			g_n = write(g_fd, &data, sizeof(data));
-			if (g_n < 0)
+			g_bytesWritten = write(g_fd, &data, sizeof(data));
+			if (g_bytesWritten < 0)
 			{
 				perror("Write failed -");
+				return -1;
 			}
 
 			//Jump to next line
@@ -315,10 +351,11 @@ int printLongString_LCD(char *pstring, size_t len)
 			data2[17] = '\0';
 			data2[18] = 0xFF;
 
-			g_n = write(g_fd, &data2, sizeof(data2));
-			if (g_n < 0)
+			g_bytesWritten = write(g_fd, &data2, sizeof(data2));
+			if (g_bytesWritten < 0)
 			{
 				perror("Write failed -");
+				return -1;
 			}
 
 			//Jump to next line
@@ -332,10 +369,11 @@ int printLongString_LCD(char *pstring, size_t len)
 			data3[17] = '\0';
 			data3[18] = 0xFF;
 
-			g_n = write(g_fd, &data3, sizeof(data3));
-			if (g_n < 0)
+			g_bytesWritten = write(g_fd, &data3, sizeof(data3));
+			if (g_bytesWritten < 0)
 			{
 				perror("Write failed -");
+				return -1;
 			}
 
 			//Jump to next line
@@ -349,10 +387,11 @@ int printLongString_LCD(char *pstring, size_t len)
 			data4[(len-47)] = '\0';
 			data4[(len-47)+1] = 0xFF;
 
-			g_n = write(g_fd, &data4, sizeof(data4));
-			if (g_n < 0)
+			g_bytesWritten = write(g_fd, &data4, sizeof(data4));
+			if (g_bytesWritten < 0)
 			{
 				perror("Write failed -");
+				return -1;
 			}
 		} else {
 			setCursor_LCD(2,1);
@@ -381,17 +420,18 @@ int printString_LCD(char *pstring, size_t len)
 	data[len+1] = '\0';
 	data[len+2] = 0xFF;
 
-	int g_n = write(g_fd, &data, sizeof(data));
+	g_bytesWritten = write(g_fd, &data, sizeof(data));
 
-	if (g_n < 0)
+	if (g_bytesWritten < 0)
 	{
 		perror("Write failed -");
+		return -1;
 	}
 	return 0;
 }
 
 /* Print distance to a lcd */
-int printDistance_LCD(char *pstring, size_t len)
+static int printDistance_LCD(char *pstring, size_t len)
 {
 	unsigned char data[len+5];
 	size_t i;
@@ -407,35 +447,30 @@ int printDistance_LCD(char *pstring, size_t len)
 	data[len+3] = '\0';
 	data[len+4] = 0xFF;
 
-	int g_n = write(g_fd, &data, sizeof(data));
+	g_bytesWritten = write(g_fd, &data, sizeof(data));
 
-	if (g_n < 0)
+	if (g_bytesWritten < 0)
 	{
 		perror("Write failed -");
+		return -1;
 	}
 	return 0;
 }
 
-/* Converts unsigned char array to char array */
-void uCharToChar(char *dst,unsigned char *src,size_t src_len)
-{
-        while (src_len--)
-            dst += sprintf(dst,"%02x",*src++);
-        *dst = '\0';
-}
-
 /* Convert int to string and print it to a lcd screen */
-void printDistance(const int distance)
+int printDistance(const int distance)
 {
 	char dBuf[5];
 	snprintf(dBuf, sizeof(dBuf), "%d", distance);
 
 	size_t l = strlen(dBuf);
 	printDistance_LCD(dBuf, l);
+
+	return 0;
 }
 
 /* Print float speed to a lcd */
-int printSpeed_LCD(char *pstring, size_t len)
+static int printSpeed_LCD(char *pstring, size_t len)
 {
 	unsigned char data[len+7];
 	size_t i;
@@ -453,17 +488,18 @@ int printSpeed_LCD(char *pstring, size_t len)
 	data[len+5] = '\0';
 	data[len+6] = 0xFF;
 
-	int g_n = write(g_fd, &data, sizeof(data));
+	g_bytesWritten = write(g_fd, &data, sizeof(data));
 
-	if (g_n < 0)
+	if (g_bytesWritten < 0)
 	{
 		perror("Write failed -");
+		return -1;
 	}
 	return 0;
 }
 
 /* Convert float to string and print it to a lcd screen */
-void printSpeed(const float speed)
+int printSpeed(const float speed)
 {
 	if(speed >= 100)
 	{
@@ -472,6 +508,8 @@ void printSpeed(const float speed)
 
 		size_t l = strlen(buf);
 		printSpeed_LCD(buf, l);
+
+		return 0;
 	}
 	else if(speed < 100)
 	{
@@ -480,7 +518,11 @@ void printSpeed(const float speed)
 
 		size_t l = strlen(buf);
 		printSpeed_LCD(buf, l);
+
+		return 0;
 	}
+
+	return 0;
 }
 
 int printConnect(void)

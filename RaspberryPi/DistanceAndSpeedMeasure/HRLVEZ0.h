@@ -16,9 +16,6 @@
 #include <string.h>
 #include <errno.h>
 
-extern int uart0_filestream;
-
-
 /* Structure for the HRLVEZ0 raw distance data reading */
 typedef struct data_frame
 {
@@ -29,7 +26,7 @@ typedef struct data_frame
 	unsigned char end;
 }  __attribute__ ((packed)) data_frame_t;
 
-/* Structure for actual data which is serialized and sent through TCP and RFCOMM sockets */
+/* Structure for actual data which is serialized and sent through TCP and Bluetooth RFCOMM sockets */
 typedef struct HRLVEZ0_Data
 {
 	long distance;
@@ -39,6 +36,7 @@ typedef struct HRLVEZ0_Data
 
 /* Function prototypes */
 int setupHRLVEZ0_Serial(void);
+int serialHRLVEZ0_Close(void);
 int measureHRLVEZ0_Data(HRLVEZ0_Data_t *HRLVEZ0_Data);
 
 #endif /* HRLVEZ0_H_ */

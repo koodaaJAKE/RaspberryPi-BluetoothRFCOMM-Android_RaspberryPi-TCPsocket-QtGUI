@@ -9,8 +9,8 @@
 #include "LCD.h"
 #include "TCP_Socket.h"
 
-/* File descriptor global variable */
-int uart0_filestream = -1;
+/* Static global variable of serial file descriptor */
+static int uart0_filestream;
 
 int setupHRLVEZ0_Serial(void)
 {
@@ -54,6 +54,19 @@ int setupHRLVEZ0_Serial(void)
 		perror("tcflush error!\n");
 	}
 	return 0;
+}
+
+int serialHRLVEZ0_Close(void)
+{
+    int statusVal;
+    statusVal = close(uart0_filestream);
+
+    if(statusVal < 0)
+    {
+    	perror("Could not close serial device");
+    	return -1;
+    }
+    return statusVal;
 }
 
 int measureHRLVEZ0_Data(HRLVEZ0_Data_t *HRLVEZ0_Data)
@@ -138,7 +151,7 @@ int measureHRLVEZ0_Data(HRLVEZ0_Data_t *HRLVEZ0_Data)
 
 					//Convert string distance to long int
                     HRLVEZ0_Data->distance = strtol ((const char*)&serial_data, NULL, 10);
-                    //printf("\n Integer distance: %ld mm \n", HRLVEZ0_Data->distance);
+                    printf("\n Integer distance: %ld mm \n", HRLVEZ0_Data->distance);
 
 					setCursor_LCD(2,3);
 					char strng[] = "Distance is:";

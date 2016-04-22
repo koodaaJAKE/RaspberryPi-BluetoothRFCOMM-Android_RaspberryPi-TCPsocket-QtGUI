@@ -9,6 +9,10 @@
 #include "HRLVEZ0.h"
 #include "SerializeDeserialize.h"
 
+/* Static function declarations */
+static int bluetoothRFCOMM_ClientConnect(const char *target_addr, uint8_t svc_uuid_int[]);
+static sdp_session_t *registerService(uint8_t rfcomm_channel);
+
 int bluetoothRFCOMM_Client(void)
 {
 	inquiry_info *ii = NULL;
@@ -119,7 +123,7 @@ int bluetoothRFCOMM_Client(void)
     return 0;
 }
 
-int bluetoothRFCOMM_ClientConnect(const char *target_addr, uint8_t svc_uuid_int[])
+static int bluetoothRFCOMM_ClientConnect(const char *target_addr, uint8_t svc_uuid_int[])
 {
 	int bytes_read, bytes_sent, s, channel, status;
     uuid_t svc_uuid;
@@ -471,7 +475,7 @@ int bluetoothRFCOMM_Server(void)
 /*
  * Registers SDP service for Bluetooth RFCOMM server connection
  */
-sdp_session_t *registerService(uint8_t rfcomm_channel)
+static sdp_session_t *registerService(uint8_t rfcomm_channel)
 {
 
 	/* A 128-bit number used to identify this service. The words are ordered from most to least

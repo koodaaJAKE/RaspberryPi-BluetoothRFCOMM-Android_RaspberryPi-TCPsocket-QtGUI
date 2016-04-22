@@ -15,8 +15,8 @@
 void sigHandler(int sig)
 {
 	printf("I got the signal..exiting\n!");
-    close(g_fd);
-    close (uart0_filestream);
+    serialLCD_Close();
+    serialHRLVEZ0_Close();
     exit(0);
 }
 
@@ -26,22 +26,11 @@ int main(void)
 
 	setupHRLVEZ0_Serial();
 	setupLCD_Serial();
-	sleep(1);
+	usleep(1000);
 
 	clear_LCD();
-	usleep(200);
-
 	setType_LCD(4, 16);
-	usleep(200);
-
 	setBacklight_LCD(250);
-	usleep(200);
-/*
-	char strng[] = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-	size_t l = strlen(strng);
-	printLongString_LCD(strng, l);
-	sleep(1);
-*/
 
 	int chooseConnectionMethod = 0;
 
@@ -62,9 +51,8 @@ int main(void)
 
 	clear_LCD();
 	setBacklight_LCD(0);
-	usleep(200);
-    close(g_fd);
-    close (uart0_filestream);
+    serialLCD_Close();
+    serialHRLVEZ0_Close();
     return 0;
 }
 
