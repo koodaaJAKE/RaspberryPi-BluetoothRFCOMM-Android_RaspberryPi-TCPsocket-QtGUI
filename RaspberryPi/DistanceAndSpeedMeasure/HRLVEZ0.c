@@ -1,7 +1,7 @@
 /*
  * hrlvez0.cpp
  *
- * This library is for reading Serial interface HRLVEZ0 Ultrasonic sensor with Raspberry Pi.
+ * This library is for reading Serial interface MaxBotix HRLVEZ0 Ultrasonic sensor with Raspberry Pi.
  */
 
 #include "HRLVEZ0.h"
