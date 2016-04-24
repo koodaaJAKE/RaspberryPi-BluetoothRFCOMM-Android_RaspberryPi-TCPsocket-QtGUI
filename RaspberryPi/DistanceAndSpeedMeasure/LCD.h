@@ -1,8 +1,5 @@
 /*
- * lcd.h
- *
- *  Created on: 9.7.2015
- *      Author: root
+ * LCD.h
  */
 
 #ifndef LCD_H_

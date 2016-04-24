@@ -1,8 +1,7 @@
 /*
  * Bluetooth_RFCOMM.c
  *
- *  Created on: 31.3.2016
- *      Author: root
+ * This library is used for communicate with Android phone through Bluetooth RFCOMM Server and Client connections.
  */
 #include "Bluetooth_RFCOMM.h"
 #include "LCD.h"

@@ -1,8 +1,8 @@
 /*
- * lcd.cpp
+ * LCD.c
  *
- *  Created on: 9.7.2015
- *      Author: root
+ * This library is for writing to 16x4 LCD display with Serial interface. The 16x4 LCD display is
+ * attached to I2C/Serial LCD Backpack and it's controlled with Raspberry Pi.
  */
 #include "LCD.h"
 

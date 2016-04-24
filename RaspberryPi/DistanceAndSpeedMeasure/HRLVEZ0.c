@@ -1,8 +1,7 @@
 /*
  * hrlvez0.cpp
  *
- *  Created on: 9.7.2015
- *      Author: root
+ * This library is for reading Serial interface HRLVEZ0 Ultrasonic sensor with Raspberry Pi.
  */
 
 #include "HRLVEZ0.h"

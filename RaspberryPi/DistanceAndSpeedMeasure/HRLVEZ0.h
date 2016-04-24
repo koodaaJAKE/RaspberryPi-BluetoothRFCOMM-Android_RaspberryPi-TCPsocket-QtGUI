@@ -1,8 +1,5 @@
 /*
  * hrlvez0.h
- *
- *  Created on: 9.7.2015
- *      Author: root
  */
 
 #ifndef HRLVEZ0_H_

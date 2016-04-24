@@ -1,8 +1,5 @@
 /*
  * Bluetooth_RFCOMM.h
- *
- *  Created on: 31.3.2016
- *      Author: root
  */
 
 #ifndef BLUETOOTH_RFCOMM_H_

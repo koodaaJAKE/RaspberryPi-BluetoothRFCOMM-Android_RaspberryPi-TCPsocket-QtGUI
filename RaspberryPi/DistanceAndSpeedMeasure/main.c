@@ -1,9 +1,5 @@
 /*
  * main.cpp
- *
- *  This software utilize MaxBotix HRLV-EZ0 ultrasonic sensor to calculate velocity of moving objects.
- *  Reading from the sensor is made with serial communication. Speed is printed to a LCD screen by serial communication.
- *
  */
 
 #include "LCD.h"

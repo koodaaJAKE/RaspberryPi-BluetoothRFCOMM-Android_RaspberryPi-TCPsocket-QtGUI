@@ -1,8 +1,7 @@
 /*
  * TCP_Socket.cpp
  *
- *  Created on: 1.12.2015
- *      Author: root
+ * This library uses polling TCP Socket server to send data between the server and Qt made GUI TCP Client.
  */
 #include "TCP_Socket.h"
 #include "LCD.h"

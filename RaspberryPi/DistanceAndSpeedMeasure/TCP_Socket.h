@@ -1,8 +1,5 @@
 /*
  * TCP_Socket.h
- *
- *  Created on: 1.12.2015
- *      Author: root
  */
 
 #ifndef TCP_SOCKET_H_
