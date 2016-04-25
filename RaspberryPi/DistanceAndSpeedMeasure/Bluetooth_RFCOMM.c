@@ -289,7 +289,7 @@ static int bluetoothRFCOMM_ClientConnect(const char *target_addr, uint8_t svc_uu
 				break;
 
 			/*
-			 * Read random text from the Android end and print it to the terminal
+			 * Read random text from the Android end and print it to the LCD display
 			 */
 			case RANDOM_TEXT:
 
@@ -423,7 +423,7 @@ int bluetoothRFCOMM_Server(void)
 				break;
 
 			/*
-			 * Read random text from the Android end and print it to the terminal
+			 * Read random text from the Android end and print it to the LCD display
 			*/
 			case RANDOM_TEXT:
 
