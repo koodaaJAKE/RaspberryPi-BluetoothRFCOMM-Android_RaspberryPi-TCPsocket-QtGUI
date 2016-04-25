@@ -301,18 +301,9 @@ static int bluetoothRFCOMM_ClientConnect(const char *target_addr, uint8_t svc_uu
 				else {
 					printf("Bytes received: %d \n", bytes_read);
 
-					char randomTextArray[bytes_read+1];
-					int i;
-
-					/* Move received data to another array with proper size and data type */
-					for(i = 0 ; i <= bytes_read ; i++){
-						randomTextArray[i] = recvBuffer[i];
-					}
-
 					/* Print it to a LCD screen */
-					size_t strLength = strlen(randomTextArray);
-					printLongString_LCD(randomTextArray, strLength);
-					sleep(1);
+					printLongString_LCD((char*)recvBuffer, bytes_read);
+					sleep(2);
 					clear_LCD();
 				}
 				break;
@@ -444,18 +435,9 @@ int bluetoothRFCOMM_Server(void)
 				else {
 					printf("Bytes received: %d \n", bytes_read);
 
-					char randomTextArray[bytes_read];
-					int i;
-
-					/* Move received data to another array with proper size and data type */
-					for(i = 0 ; i <= bytes_read ; i++){
-						randomTextArray[i] = recvBuffer[i];
-					}
-
 					/* Print it to a LCD screen */
-					size_t strLength = strlen(randomTextArray);
-					printLongString_LCD(randomTextArray, strLength);
-					sleep(1);
+					printLongString_LCD((char*)recvBuffer, bytes_read);
+					sleep(2);
 					clear_LCD();
 				}
 				break;
