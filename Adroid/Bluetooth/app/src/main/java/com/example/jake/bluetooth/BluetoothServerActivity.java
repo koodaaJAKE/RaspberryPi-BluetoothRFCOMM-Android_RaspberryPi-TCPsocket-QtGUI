@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static java.lang.Float.intBitsToFloat;
+
 public class BluetoothServerActivity extends Activity implements View.OnClickListener {
 
     private static final UUID bluetoothUUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
@@ -134,7 +136,9 @@ public class BluetoothServerActivity extends Activity implements View.OnClickLis
 
             case R.id.ClearTextButton:
                 randomEditText.setText("");
-                clearScreen();
+                if(isTransferThreadRunning && isConnectThreadRunning) {
+                    clearScreen();
+                }
                 break;
         }
     }
@@ -169,23 +173,21 @@ public class BluetoothServerActivity extends Activity implements View.OnClickLis
                     Toast.makeText(BluetoothServerActivity.this,"Received data from the socket", Toast.LENGTH_SHORT).show();
                     int[] receivedData = (int[]) msg.obj;
                     int distance, intVelocity;
-                    double velocity;
+                    float velocity;
 
                     //Parse the received data
                     distance = fromBytesToInt(receivedData, false);
                     intVelocity = fromBytesToInt(receivedData, true);
-                    velocity = (double)intVelocity;
 
-                    //Set the precision of double to be 1 decimal
-                    Double truncatedVelocity = new Double(velocity);
-                    Double truncatedDouble = new BigDecimal(truncatedVelocity)
-                            .setScale(1, BigDecimal.ROUND_HALF_UP)
-                            .doubleValue();
+                    //Integer to IEEE 754 float
+                    velocity = intBitsToFloat(intVelocity);
 
-                    String doubleToString = Double.toString(truncatedDouble);
+                    //Convert to string and set precision to 2
+                    String velocityToString = String.format("%.02f", velocity);
+
                     String intToString = Integer.toString(distance);
 
-                    velocityView.setText(doubleToString);
+                    velocityView.setText(velocityToString);
                     distanceView.setText(intToString);
 
                     break;

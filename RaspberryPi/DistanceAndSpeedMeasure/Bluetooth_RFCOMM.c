@@ -57,11 +57,10 @@ int bluetoothRFCOMM_Client(void)
     /*                                                                        */
     /* The inquiry lasts for at most 1.28 * len seconds, and at most max_rsp  */
     /* devices will be returned in the output parameter ii, which must be     */
-    /* large enough to accommodate max_rsp results. We suggest using a        */
-    /* max_rsp of 255 for a standard 10.24 second inquiry.                    */
+    /* large enough to accommodate max_rsp results.                           */
     /**************************************************************************/
     len = 2;
-    max_rsp = 255;
+    max_rsp = 10;
     flags = IREQ_CACHE_FLUSH;
     ii = (inquiry_info*)malloc(max_rsp * sizeof(inquiry_info));
 
@@ -289,7 +288,7 @@ static int bluetoothRFCOMM_ClientConnect(const char *target_addr, uint8_t svc_uu
 				break;
 
 			/*
-			 * Read random text from the Android end and print it to the terminal
+			 * Read random text from the Android end and print it to the LCD display
 			 */
 			case RANDOM_TEXT:
 
@@ -303,7 +302,11 @@ static int bluetoothRFCOMM_ClientConnect(const char *target_addr, uint8_t svc_uu
 
 					/* Print it to a LCD screen */
 					printLongString_LCD((char*)recvBuffer, bytes_read);
-					sleep(2);
+					if(bytes_read < 32){
+						sleep(1);
+					}
+					else
+						sleep(2);
 					clear_LCD();
 				}
 				break;
@@ -423,7 +426,7 @@ int bluetoothRFCOMM_Server(void)
 				break;
 
 			/*
-			 * Read random text from the Android end and print it to the terminal
+			 * Read random text from the Android end and print it to the LCD display
 			*/
 			case RANDOM_TEXT:
 
@@ -437,7 +440,11 @@ int bluetoothRFCOMM_Server(void)
 
 					/* Print it to a LCD screen */
 					printLongString_LCD((char*)recvBuffer, bytes_read);
-					sleep(2);
+					if(bytes_read < 32){
+						sleep(1);
+					}
+					else
+						sleep(2);
 					clear_LCD();
 				}
 				break;

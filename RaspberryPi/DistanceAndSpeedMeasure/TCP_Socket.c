@@ -168,7 +168,7 @@ int TCP_SocketPollingServer(void)
           /*******************************************************/
           /* Listening descriptor is readable.                   */
           /*******************************************************/
-          printf("  Listening socket is readable\n");
+          printf(" Listening socket is readable\n");
 
           /*******************************************************/
           /* Accept all incoming connections that are            */

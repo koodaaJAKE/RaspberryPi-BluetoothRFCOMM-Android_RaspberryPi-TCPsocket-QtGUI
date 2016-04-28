@@ -57,8 +57,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/Distance"
-        android:id="@+id/DistanceTextView"
+        android:text="@string/Temperature"
+        android:id="@+id/TemperatureTextView"
         android:gravity="center_horizontal"
         android:layout_alignParentTop="true"
         android:layout_toLeftOf="@+id/ConnectButton"
@@ -69,10 +69,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/Velocity"
-        android:id="@+id/VelocityTextView"
+        android:text="@string/Humidity"
+        android:id="@+id/HumidityTextView"
         android:gravity="center_horizontal"
-        android:layout_alignTop="@+id/DistanceTextView"
+        android:layout_alignTop="@+id/TemperatureTextView"
         android:layout_toRightOf="@+id/ConnectButton"
         android:layout_toEndOf="@+id/ConnectButton" />
 
@@ -94,8 +94,8 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text=" "
-        android:id="@+id/distanceValueView"
-        android:layout_below="@+id/DistanceTextView"
+        android:id="@+id/temperatureValueView"
+        android:layout_below="@+id/TemperatureTextView"
         android:layout_toLeftOf="@+id/ReadSensorDataButton"
         android:layout_toStartOf="@+id/ReadSensorDataButton" />
 
@@ -104,8 +104,8 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text=" "
-        android:id="@+id/velocityValueView"
-        android:layout_below="@+id/VelocityTextView"
+        android:id="@+id/humidityValueView"
+        android:layout_below="@+id/HumidityTextView"
         android:layout_toRightOf="@+id/ReadSensorDataButton"
         android:layout_toEndOf="@+id/ReadSensorDataButton"/>
 

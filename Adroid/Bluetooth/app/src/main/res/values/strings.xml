@@ -18,7 +18,9 @@
     <string name="CloseConnection">Close Connection</string>
     <string name="SendSomeText">Send Some Text</string>
     <string name="ReadSensorData">Read Sensor Data</string>
+    <string name="Temperature">Tmperature</string>
+    <string name="Humidity">Humidity</string>
+    <string name="ClearText">Clear Text</string>
     <string name="Distance">Distance</string>
     <string name="Velocity">Velocity</string>
-    <string name="ClearText">Clear Text</string>
 </resources>

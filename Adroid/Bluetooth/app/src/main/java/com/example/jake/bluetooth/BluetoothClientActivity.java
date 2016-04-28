@@ -16,10 +16,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import static java.lang.Float.intBitsToFloat;
 
 public class BluetoothClientActivity extends Activity implements View.OnClickListener {
 
@@ -48,7 +49,7 @@ public class BluetoothClientActivity extends Activity implements View.OnClickLis
     private ClientThread clientThread;
     private BluetoothTransferThread clientTransferThread;
     Button Connect, SendSomeText, Hello, CloseConnection, ReadSensorData, ClearText;
-    TextView distanceView, velocityView;
+    TextView temperatureView, humidityView;
     EditText randomEditText;
     private String randomText;
 
@@ -64,7 +65,6 @@ public class BluetoothClientActivity extends Activity implements View.OnClickLis
         setTitle(R.id.client);
 
         initialize();
-
     }
 
     private void initialize() {
@@ -76,8 +76,8 @@ public class BluetoothClientActivity extends Activity implements View.OnClickLis
         ReadSensorData = (Button)findViewById(R.id.ReadSensorDataButton);
         ClearText = (Button)findViewById(R.id.ClearTextButton);
 
-        distanceView = (TextView)findViewById(R.id.distanceValueView);
-        velocityView = (TextView)findViewById(R.id.velocityValueView);
+        temperatureView = (TextView)findViewById(R.id.temperatureValueView);
+        humidityView = (TextView)findViewById(R.id.humidityValueView);
 
         randomEditText = (EditText)findViewById(R.id.editText);
 
@@ -136,8 +136,8 @@ public class BluetoothClientActivity extends Activity implements View.OnClickLis
             case R.id.ReadSensorDataButton:
 
                 //Clear the TextViews
-                distanceView.setText("");
-                velocityView.setText("");
+                temperatureView.setText("");
+                humidityView.setText("");
 
                 if (isConnectThreadRunning && isTransferThreadRunning){
                     readSensorData();
@@ -160,7 +160,11 @@ public class BluetoothClientActivity extends Activity implements View.OnClickLis
 
             case R.id.ClearTextButton:
                 randomEditText.setText("");
-                clearScreen();
+                temperatureView.setText("");
+                humidityView.setText("");
+                if(isTransferThreadRunning && isConnectThreadRunning) {
+                    clearScreen();
+                }
                 break;
         }
     }
@@ -193,25 +197,24 @@ public class BluetoothClientActivity extends Activity implements View.OnClickLis
                     Toast.makeText(BluetoothClientActivity.this,"Received data from the socket", Toast.LENGTH_SHORT).show();
 
                     int[] receivedData = (int[])msg.obj;
-                    int distance, intVelocity;
-                    double velocity;
+                    int intTemperature, intHumidity;
+                    float temperature, humidity;
 
                     //Parse the received data
-                    distance = fromBytesToInt(receivedData, false);
-                    intVelocity = fromBytesToInt(receivedData, true);
-                    velocity = (double)intVelocity;
+                    intHumidity = fromBytesToInt(receivedData, false);
+                    intTemperature = fromBytesToInt(receivedData, true);
 
-                    //Set the precision of double to be 1 decimal
-                    Double truncatedVelocity = new Double(velocity);
-                    Double truncatedDouble = new BigDecimal(truncatedVelocity)
-                            .setScale(1, BigDecimal.ROUND_HALF_UP)
-                            .doubleValue();
+                    //Integer to IEEE 754 float
+                    temperature = intBitsToFloat(intTemperature);
+                    humidity = intBitsToFloat(intHumidity);
 
-                    String doubleToString = Double.toString(truncatedDouble);
-                    String intToString = Integer.toString(distance);
+                    //Set the precision and converts to string
+                    String temperatureToString = String.format("%.02f", temperature);
+                    String humidityToString = String.format("%.02f", humidity);
 
-                    velocityView.setText(doubleToString);
-                    distanceView.setText(intToString);
+                    //Show in TextView
+                    temperatureView.setText(temperatureToString);
+                    humidityView.setText(humidityToString);
 
                     break;
 
@@ -280,11 +283,11 @@ public class BluetoothClientActivity extends Activity implements View.OnClickLis
     private int fromBytesToInt(int[] bytes, boolean tf){
         int bytesToInt;
         if(tf) {
-            //Gets the float velocity from the buffer
-            return bytesToInt = bytes[4] << 24 | bytes[5] << 16 | bytes[6] << 8 | bytes[7];
+            //Gets the float temperature from the buffer
+            return bytesToInt = bytes[0] << 24 | bytes[1] << 16 | bytes[2] << 8 | bytes[3];
         }else{
-            //Gets the int distance from the buffer
-            return bytesToInt = bytes[8] << 24 | bytes[9] << 16 | bytes[10] << 8 | bytes[11];
+            //Gets the float humidity from the buffer
+            return bytesToInt = bytes[4] << 24 | bytes[5] << 16 | bytes[6] << 8 | bytes[7];
         }
     }
 
