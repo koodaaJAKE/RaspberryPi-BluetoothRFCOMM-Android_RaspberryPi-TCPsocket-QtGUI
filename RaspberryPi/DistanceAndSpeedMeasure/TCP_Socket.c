@@ -1,13 +1,13 @@
 /*
  * TCP_Socket.cpp
  *
- * This library uses polling TCP Socket server to send data between the server and Qt made GUI TCP Client.
+ * This library uses polling TCP Socket Server to send data between the server and Qt made GUI TCP Client.
  */
 #include "TCP_Socket.h"
 #include "LCD.h"
 #include "SerializeDeserialize.h"
 
-int TCP_SocketPollingServer(void)
+int TCP_SocketPollingServer(thread_data_t *sensorData)
 {
 	int on = 1;
     struct sockaddr_in server;
@@ -18,8 +18,7 @@ int TCP_SocketPollingServer(void)
     unsigned char sendBuffer[BUFFERSIZE];
     unsigned char recvBuffer[1];
     int nfds = 1, current_size = 0, i, j;
-    unsigned char *ptr;
-    HRLVEZ0_Data_t HRLVEZ0_Data;
+    unsigned char *serializationLengthPtr;
 
     /*************************************************************/
 	/* Open text file where to store the distance data           */
@@ -30,6 +29,7 @@ int TCP_SocketPollingServer(void)
 	if(NULL == f)
 	{
 		perror("Can't open file\n");
+		return -1;
 	}
 
     /*************************************************************/
@@ -39,6 +39,7 @@ int TCP_SocketPollingServer(void)
     if (socket_fd == -1)
     {
         perror("Could not create socket\n");
+        return -1;
     }
 
     /*************************************************************/
@@ -48,7 +49,7 @@ int TCP_SocketPollingServer(void)
     {
     	perror("setsockopt error!\n");
     	close(socket_fd);
-    	exit(EXIT_FAILURE);
+    	return -1;
     }
 
     /*************************************************************/
@@ -59,9 +60,9 @@ int TCP_SocketPollingServer(void)
     rc = ioctl(socket_fd, FIONBIO, (char *)&on);
     if(rc < 0)
     {
-      perror("ioctl() error");
-      close(socket_fd);
-      exit(EXIT_FAILURE);
+    	perror("ioctl() error");
+        close(socket_fd);
+        return -1;
     }
 
     /*************************************************************/
@@ -76,7 +77,7 @@ int TCP_SocketPollingServer(void)
     {
     	perror("Binding error!\n");
     	close(socket_fd);
-    	exit(EXIT_FAILURE);
+    	return -1;
     }
 
     /*************************************************************/
@@ -86,7 +87,7 @@ int TCP_SocketPollingServer(void)
     {
     	perror("Listen error!\n");
     	close(socket_fd);
-    	exit(EXIT_FAILURE);
+    	return -1;
     }
 
     /*************************************************************/
@@ -239,6 +240,7 @@ int TCP_SocketPollingServer(void)
             	{
             		perror(" recv() failed");
             		close_conn = TRUE;
+            		end_server = TRUE;
             	}
             	break;
             }
@@ -257,6 +259,7 @@ int TCP_SocketPollingServer(void)
             {
             	printf(" Connection closed\n");
                 close_conn = TRUE;
+                end_server = TRUE;
                 break;
             }
 
@@ -308,19 +311,18 @@ int TCP_SocketPollingServer(void)
                     /*****************************************************/
                     case 'S':
 
-                    	measureHRLVEZ0_Data(&HRLVEZ0_Data);
-
                         //Serialize data before sending it through socket
-                        ptr = Serialize_Struct(sendBuffer, &HRLVEZ0_Data);
+                        serializationLengthPtr = Serialize_Struct(sendBuffer, sensorData);
 
-                        printf("Distance: %ld\n", HRLVEZ0_Data.distance);
-                        printf("Speed: %0.2f\n", HRLVEZ0_Data.speed);
+                        printf("Distance: %ld\n", sensorData->distance);
+                        printf("Speed: %0.2f\n", sensorData->speed);
 
-                        rc = send(fds[i].fd, sendBuffer, ptr - sendBuffer, 0);
+                        rc = send(fds[i].fd, sendBuffer, serializationLengthPtr - sendBuffer, 0);
                         if(rc < 0)
                         {
                         	perror("send() failed");
                         	close_conn = TRUE;
+                        	end_server = TRUE;
                         	break;
                         }
                         else
@@ -332,10 +334,13 @@ int TCP_SocketPollingServer(void)
                         /*******************************************/
             			/* Write distance data to the text file    */
                         /*******************************************/
-            			rc = fprintf(f, "%ld\n", HRLVEZ0_Data.distance);
+            			rc = fprintf(f, "%ld\n", sensorData->distance);
             			if(rc < 0)
             			{
             				perror("Write failed!\n");
+            				close_conn = TRUE;
+            				end_server = TRUE;
+            				break;
             			}
             			break;
 

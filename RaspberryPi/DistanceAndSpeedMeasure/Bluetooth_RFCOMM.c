@@ -95,7 +95,7 @@ int bluetoothRFCOMM_Client(void)
 
     		/***************************************/
     		/* Copy the address string to an array */
-    		/* of strings of addresses             */
+    		/* of strings of addresses (2D array)  */
     		/***************************************/
     		strcpy(addr_array[i], addr);
     		printf("%d. Device: %s  %s \n", i+1, addr, name);
@@ -154,7 +154,7 @@ static int bluetoothRFCOMM_ClientConnect(const char *target_addr, uint8_t svc_uu
     if(sdp_service_search_attr_req( session, search_list, SDP_ATTR_REQ_RANGE, attrid_list, &response_list) < 0){
     	perror("SDP service search failed \n");
     	sdp_close(session);
-    	return 1;
+    	return -1;
     }
 
     sdp_list_t *r = response_list;
@@ -211,6 +211,11 @@ static int bluetoothRFCOMM_ClientConnect(const char *target_addr, uint8_t svc_uu
 
     //Allocate a socket
     s = socket(AF_BLUETOOTH, SOCK_STREAM, BTPROTO_RFCOMM);
+    if(s < 0)
+    {
+    	perror("Error opening socket: \n");
+    	return -1;
+    }
 
     //Set the connection parameters (who to connect to)
     addr.rc_family = AF_BLUETOOTH;
@@ -295,7 +300,7 @@ static int bluetoothRFCOMM_ClientConnect(const char *target_addr, uint8_t svc_uu
 				bytes_read = read(s, recvBuffer, sizeof(recvBuffer));
 				if(bytes_read <= 0){
 					perror("read() failed: \n");
-					break;
+					socketCloseFlag = true;
 				}
 				else {
 					printf("Bytes received: %d \n", bytes_read);
@@ -342,19 +347,39 @@ int bluetoothRFCOMM_Server(void)
 
 	//Allocate socket
 	sock = socket(AF_BLUETOOTH, SOCK_STREAM, BTPROTO_RFCOMM);
+	if(sock < 0)
+	{
+		perror("Error opening socket: \n");
+		return -1;
+	}
 	printf("socket() returned %d\n", sock);
 
 	//Bind socket to port 3 of the first available
 	result = bind(sock, (struct sockaddr *)&loc_addr, sizeof(loc_addr));
+	if(result < 0)
+	{
+		perror("Binding error: \n");
+		return -1;
+	}
 	printf("bind() on channel %d returned %d\n", port, result);
 
 	//Put socket into listening mode
 	result = listen(sock, 1);
+	if(result < 0)
+	{
+		perror("Listening error: \n");
+		return -1;
+	}
 	printf("listen() returned %d\n", result);
 
 	//Accept one connection
 	printf("Waiting for client to connect...\n");
 	client = accept(sock, (struct sockaddr *)&rem_addr, &opt);
+	if(client < 0)
+	{
+		perror("Couldn't accept connection: \n");
+		return -1;
+	}
 	printf("accept() returned %d\n", client);
 
 	ba2str(&rem_addr.rc_bdaddr, buffer);
@@ -433,7 +458,7 @@ int bluetoothRFCOMM_Server(void)
 				bytes_read = read(client, recvBuffer, sizeof(recvBuffer));
 				if(bytes_read <= 0){
 					perror("read() failed: \n");
-					exit(1);
+					socketCloseFlag = true;
 				}
 				else {
 					printf("Bytes received: %d \n", bytes_read);

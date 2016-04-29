@@ -76,11 +76,11 @@ unsigned int Serialize754Float(float f, unsigned int bits, unsigned int expbits)
     return (sign<<(bits-1)) | (exp<<(bits-expbits-1)) | significand;
 }
 
-unsigned char *Serialize_Struct(unsigned char *buffer, const HRLVEZ0_Data_t *Data)
+unsigned char *Serialize_Struct(unsigned char *buffer, const thread_data_t *Data)
 {
 	buffer = Serialize_Int(buffer, Data->distance);
 	buffer = Serialize_Float(buffer, Data->speed);
-	buffer = Serialize_Int(buffer, Data->prevdistance);
+	buffer = Serialize_Int(buffer, Data->prevDistance);
 	return buffer;
 }
 

@@ -9,7 +9,8 @@ C_SRCS += \
 ../LCD.c \
 ../SerializeDeserialize.c \
 ../TCP_Socket.c \
-../main.c 
+../main.c \
+../thread.c 
 
 OBJS += \
 ./Bluetooth_RFCOMM.o \
@@ -17,7 +18,8 @@ OBJS += \
 ./LCD.o \
 ./SerializeDeserialize.o \
 ./TCP_Socket.o \
-./main.o 
+./main.o \
+./thread.o 
 
 C_DEPS += \
 ./Bluetooth_RFCOMM.d \
@@ -25,7 +27,8 @@ C_DEPS += \
 ./LCD.d \
 ./SerializeDeserialize.d \
 ./TCP_Socket.d \
-./main.d 
+./main.d \
+./thread.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
