@@ -311,13 +311,11 @@ int TCP_SocketPollingServer(thread_data_t *sensorData)
                     /*****************************************************/
                     case 'S':
 
-                        //Serialize data before sending it through socket
+                        /* Serialize data before sending it through socket */
+                    	pthread_mutex_lock(&sensorData->mutex);
                         serializationLengthPtr = Serialize_Struct(sendBuffer, sensorData);
-
-                        printf("Distance: %ld\n", sensorData->distance);
-                        printf("Speed: %0.2f\n", sensorData->speed);
-
                         rc = send(fds[i].fd, sendBuffer, serializationLengthPtr - sendBuffer, 0);
+                        pthread_mutex_unlock(&sensorData->mutex);
                         if(rc < 0)
                         {
                         	perror("send() failed");

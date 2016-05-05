@@ -16,6 +16,7 @@
 #include <bluetooth/sdp_lib.h>
 #include <bluetooth/rfcomm.h>
 #include <errno.h>
+#include "thread.h"
 
 typedef enum { false, true } bool;
 
@@ -31,7 +32,7 @@ typedef enum { false, true } bool;
 #define CLEAR_SCREEN				   0x05
 
 /* Function prototypes */
-int bluetoothRFCOMM_Client(void);
-int bluetoothRFCOMM_Server(void);
+int bluetoothRFCOMM_Client(thread_data_t *sensorData);
+int bluetoothRFCOMM_Server(thread_data_t *sensorData);
 
 #endif /* BLUETOOTH_RFCOMM_H_ */

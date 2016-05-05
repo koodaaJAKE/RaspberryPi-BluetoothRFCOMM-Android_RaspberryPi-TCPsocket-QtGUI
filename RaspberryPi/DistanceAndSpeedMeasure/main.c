@@ -8,14 +8,13 @@
 #include "Bluetooth_RFCOMM.h"
 #include "thread.h"
 
-/* Flag which terminates the thread while loop */
+/* Global flag which terminates the thread while loop */
 volatile sig_atomic_t thread_loop_flag = 0;
 
 void sigHandler(int sig)
 {
 	printf("I got the signal..exiting\n!");
-
-	//Set the boolean flag to exit thread loops
+	//Set the flag to exit thread loops
 	thread_loop_flag = 1;
 }
 
@@ -27,8 +26,8 @@ int main(void)
 	thread_data_t *sensorData;
 	sensorData = malloc(sizeof(thread_data_t));
 
-	pthread_t measureHRLVEZ0Thread, TCP_SocketThread;
-	int iret, iret1;
+	pthread_t measureHRLVEZ0Thread, TCP_SocketThread, bluetoothRFCOMMThread;
+	int iret, iret1, iret2;
 
 	setupHRLVEZ0_Serial();
 	setupLCD_Serial();
@@ -37,22 +36,6 @@ int main(void)
 	clear_LCD();
 	setType_LCD(4, 16);
 	setBacklight_LCD(250);
-/*
-	int chooseConnectionMethod = 0;
-
-	printf("\n*********************************************\n");
-	printf("Choose what Bluetooth connect method to use    \n");
-	printf("1. for Server and 2. for Client connection       ");
-	printf("\n*********************************************\n");
-
-	scanf("%d", &chooseConnectionMethod);
-
-	if(chooseConnectionMethod == 1) {
-		bluetoothRFCOMM_Server();
-	}
-	else
-		bluetoothRFCOMM_Client();
-*/
 
 	initializeMutex(sensorData);
 
@@ -72,10 +55,19 @@ int main(void)
 		fprintf(stderr, "Error - pthread_create() return code: %d\n", iret1);
 		exit(EXIT_FAILURE);
 	}
-
+/*
+	iret2 = pthread_create(&bluetoothRFCOMMThread, NULL, bluetoothRFCOMM, (void*)sensorData);
+	if(iret2)
+	{
+		fprintf(stderr, "Error - pthread_create() return code: %d\n", iret2);
+		exit(EXIT_FAILURE);
+	}
+*/
 	/* Let the threads exit */
 	pthread_join(measureHRLVEZ0Thread, NULL);
 	pthread_join(TCP_SocketThread, NULL);
+	//pthread_join(bluetoothRFCOMMThread, NULL);
+	printf("Threads closed!\n");
 
 	free(sensorData);
 	clear_LCD();

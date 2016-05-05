@@ -9,10 +9,10 @@
 #include "SerializeDeserialize.h"
 
 /* Static function declarations */
-static int bluetoothRFCOMM_ClientConnect(const char *target_addr, uint8_t svc_uuid_int[]);
-static sdp_session_t *registerService(uint8_t rfcomm_channel);
+static int bluetoothRFCOMM_ClientConnect(const char *target_addr, const uint8_t svc_uuid_int[], thread_data_t *sensorData);
+static sdp_session_t *registerService(const uint8_t rfcomm_channel);
 
-int bluetoothRFCOMM_Client(void)
+int bluetoothRFCOMM_Client(thread_data_t *sensorData)
 {
 	inquiry_info *ii = NULL;
     int max_rsp, num_rsp;
@@ -109,7 +109,7 @@ int bluetoothRFCOMM_Client(void)
         /*
          * Start the Bluetooth RFCOMM Client service and pass it the chosen Bluetooth device address
          */
-        bluetoothRFCOMM_ClientConnect(addr_array[UserInput-1], svc_uuid_int);
+        bluetoothRFCOMM_ClientConnect(addr_array[UserInput-1], svc_uuid_int, sensorData);
     }
     else
     {
@@ -121,15 +121,13 @@ int bluetoothRFCOMM_Client(void)
     return 0;
 }
 
-static int bluetoothRFCOMM_ClientConnect(const char *target_addr, uint8_t svc_uuid_int[])
+static int bluetoothRFCOMM_ClientConnect(const char *target_addr, const uint8_t svc_uuid_int[], thread_data_t *sensorData)
 {
 	int bytes_read, bytes_sent, s, channel, status;
     uuid_t svc_uuid;
-    //bdaddr_t target;
     sdp_list_t *response_list = NULL, *search_list, *attrid_list;
     sdp_session_t *session = 0;
     bool socketCloseFlag = false;
-	HRLVEZ0_Data_t bluetoothHRLVEZ0_Data;
 	unsigned char *serializationPtr;
 	struct sockaddr_rc addr = { 0 };
 
@@ -268,11 +266,10 @@ static int bluetoothRFCOMM_ClientConnect(const char *target_addr, uint8_t svc_uu
 
 			case READ_HRLVEZ0_DATA:
 
-				//Read the HRLVEZ0 sensor data
-				measureHRLVEZ0_Data(&bluetoothHRLVEZ0_Data);
-
-				//Serialize data before sending it through socket
-				serializationPtr = Serialize_Struct(sendBuffer, &bluetoothHRLVEZ0_Data);
+				/* Serialize data before sending it through socket */
+				pthread_mutex_lock(&sensorData->mutex);
+				serializationPtr = Serialize_Struct(sendBuffer, sensorData);
+				pthread_mutex_unlock(&sensorData->mutex);
 				sendBuffer[12] = FRAME_END_CHAR;
 				bytes_sent = write(s, sendBuffer, serializationPtr - sendBuffer + 1);
 				if(bytes_sent <= 0)
@@ -327,14 +324,13 @@ static int bluetoothRFCOMM_ClientConnect(const char *target_addr, uint8_t svc_uu
     return 0;
 }
 
-int bluetoothRFCOMM_Server(void)
+int bluetoothRFCOMM_Server(thread_data_t *sensorData)
 {
 	int port = 3, result, sock, client, bytes_read, bytes_sent;
 	struct sockaddr_rc loc_addr = { 0 }, rem_addr = { 0 };
 	char buffer[1024] = { 0 };
 	socklen_t opt = sizeof(rem_addr);
 	bool socketCloseFlag = false;
-	HRLVEZ0_Data_t bluetoothHRLVEZ0_Data;
 	unsigned char *serializationPtr;
 
 	//Local Bluetooth adapter
@@ -426,11 +422,10 @@ int bluetoothRFCOMM_Server(void)
 
 			case READ_HRLVEZ0_DATA:
 
-				//Read the HRLVEZ0 sensor data
-				measureHRLVEZ0_Data(&bluetoothHRLVEZ0_Data);
-
-				//Serialize data before sending it through socket
-				serializationPtr = Serialize_Struct(sendBuffer, &bluetoothHRLVEZ0_Data);
+				/* Serialize data before sending it through socket */
+				pthread_mutex_lock(&sensorData->mutex);
+				serializationPtr = Serialize_Struct(sendBuffer, sensorData);
+				pthread_mutex_unlock(&sensorData->mutex);
 				sendBuffer[12] = FRAME_END_CHAR;
 				bytes_sent = write(client, sendBuffer, serializationPtr - sendBuffer + 1);
 				if(bytes_sent <= 0)
@@ -488,7 +483,7 @@ int bluetoothRFCOMM_Server(void)
 /*
  * Registers SDP service for Bluetooth RFCOMM server connection
  */
-static sdp_session_t *registerService(uint8_t rfcomm_channel)
+static sdp_session_t *registerService(const uint8_t rfcomm_channel)
 {
 
 	/* A 128-bit number used to identify this service. The words are ordered from most to least

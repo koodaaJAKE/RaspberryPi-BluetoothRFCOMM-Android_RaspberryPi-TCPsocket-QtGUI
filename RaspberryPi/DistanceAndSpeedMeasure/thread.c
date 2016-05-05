@@ -4,7 +4,7 @@
 #include "HRLVEZ0.h"
 #include "thread.h"
 #include "TCP_Socket.h"
-#include "TCP_Socket.h"
+#include "Bluetooth_RFCOMM.h"
 
 int initializeMutex(thread_data_t *init_mutex_t)
 {
@@ -43,6 +43,32 @@ void *TCP_Socket(void *arg)
 		if(TCP_SocketPollingServer(sensorData) <= 0);
 			thread_loop_flag = 1;
 
+	}
+	pthread_exit(NULL);
+}
+
+void *bluetoothRFCOMM(void *arg)
+{
+	while(!thread_loop_flag)
+	{
+		thread_data_t *sensorData = (thread_data_t*)arg;
+
+		int chooseConnectionMethod = 0;
+
+		printf("\n*********************************************\n");
+		printf("Choose what Bluetooth connect method to use    \n");
+		printf("1. for Server and 2. for Client connection       ");
+		printf("\n*********************************************\n");
+
+		scanf("%d", &chooseConnectionMethod);
+
+		if(chooseConnectionMethod == 1) {
+			if(bluetoothRFCOMM_Server(sensorData) <= 0)
+				thread_loop_flag = 1;
+		}
+		else
+			if(bluetoothRFCOMM_Client(sensorData) <= 0)
+				thread_loop_flag = 1;
 	}
 	pthread_exit(NULL);
 }

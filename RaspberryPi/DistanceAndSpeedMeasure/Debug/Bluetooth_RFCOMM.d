@@ -1,12 +1,12 @@
-Bluetooth_RFCOMM.d: ../Bluetooth_RFCOMM.c ../Bluetooth_RFCOMM.h ../LCD.h \
- ../HRLVEZ0.h ../SerializeDeserialize.h ../thread.h
+Bluetooth_RFCOMM.d: ../Bluetooth_RFCOMM.c ../Bluetooth_RFCOMM.h \
+ ../thread.h ../HRLVEZ0.h ../LCD.h ../SerializeDeserialize.h
 
 ../Bluetooth_RFCOMM.h:
 
-../LCD.h:
+../thread.h:
 
 ../HRLVEZ0.h:
 
-../SerializeDeserialize.h:
+../LCD.h:
 
-../thread.h:
+../SerializeDeserialize.h:

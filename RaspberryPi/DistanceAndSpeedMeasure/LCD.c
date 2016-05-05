@@ -7,14 +7,64 @@
 #include "LCD.h"
 
 /* Static function declarations */
-static int printSpeed_LCD(char* pstring, size_t len);
-static int printDistance_LCD(char *pstring, size_t len);
+static int createCharacter(const unsigned char memoryLocation, const unsigned char *characterMap);
+static int createAwithDots(void);
+static int createOwithDots(void);
+static int createCapitalAwithDots(void);
+static int createCapitalOwithDots(void);
+static int printSpeed_LCD(const char* pstring, const size_t len);
+static int printDistance_LCD(const char *pstring, const size_t len);
 
 /* Global static variable of serial file descriptor */
 static int g_fd;
 
 /* Global static variable of bytes written */
 static int g_bytesWritten;
+
+/* Custom made characters */
+unsigned char aWithDots[8] = {
+	0b01010,
+	0b00000,
+	0b01110,
+	0b00011,
+	0b01111,
+	0b11011,
+	0b01111,
+	0b0000
+};
+
+unsigned char oWithDots[8] = {
+	0b01010,
+	0b00000,
+	0b01110,
+	0b10001,
+	0b10001,
+	0b10001,
+	0b01110,
+	0b00000
+};
+
+unsigned char capitalAwithDots[8] = {
+	0b01010,
+	0b00000,
+	0b01110,
+	0b10001,
+	0b10001,
+	0b11111,
+	0b10001,
+	0b10001
+};
+
+unsigned char capitalOwithDots[8] = {
+	0b01010,
+	0b00000,
+	0b01110,
+	0b10001,
+	0b10001,
+	0b10001,
+	0b10001,
+	0b01110
+};
 
 /* Open serial port and set the settings */
 int setupLCD_Serial(void)
@@ -62,6 +112,13 @@ int setupLCD_Serial(void)
     	perror("tcsetattr error!\n");
     	return -1;
     }
+
+	/* Create custom made characters */
+	createAwithDots();
+	createOwithDots();
+	createCapitalAwithDots();
+	createCapitalOwithDots();
+
     return 0;
 }
 
@@ -77,6 +134,89 @@ int serialLCD_Close(void)
     	return -1;
     }
     return statusVal;
+}
+
+/* Creates custom made character */
+static int createCharacter(const unsigned char memoryLocation, const unsigned char *characterMap)
+{
+	/* Memory location for custom made character can be between 0-7 */
+	if(memoryLocation <= 7 && memoryLocation >= 0)
+	{
+		unsigned char characterMapData[8];
+		int i;
+
+		/* Populate the character map data array */
+		for( i = 0 ; i < 8 ; i++){
+			characterMapData[i] = characterMap[i];
+		}
+
+		unsigned char data[2], dataEnd[1] = { 0xFF };
+		data[0] = 0x40;
+		data[1] = memoryLocation;
+
+		g_bytesWritten = write(g_fd, &data, sizeof(data));
+
+		if (g_bytesWritten < 0)
+		{
+			perror("Write failed - ");
+			return -1;
+		}
+
+		g_bytesWritten = write(g_fd, &characterMapData, sizeof(characterMapData));
+
+		if (g_bytesWritten < 0)
+		{
+			perror("Write failed - ");
+			return -1;
+		}
+
+		g_bytesWritten = write(g_fd, &dataEnd, sizeof(dataEnd));
+
+		if (g_bytesWritten < 0)
+		{
+			perror("Write failed - ");
+			return -1;
+		}
+		return 0;
+	}
+	else
+		return -1;
+}
+
+static int createAwithDots(void)
+{
+	if(createCharacter(0x00, aWithDots) < 0){
+		return -1;
+	}
+	else
+		return 0;
+}
+
+static int createOwithDots(void)
+{
+	if(createCharacter(0x01, oWithDots) < 0){
+		return -1;
+	}
+	else
+		return 0;
+}
+
+static int createCapitalAwithDots(void)
+{
+	if(createCharacter(0x02, capitalAwithDots) < 0){
+		return -1;
+	}
+	else
+		return 0;
+}
+
+static int createCapitalOwithDots(void)
+{
+	if(createCharacter(0x03, capitalOwithDots) < 0){
+		return -1;
+	}
+	else
+		return 0;
 }
 
 /* Clears LCD display */
@@ -171,7 +311,7 @@ int writeChar_LCD(const unsigned char c)
 }
 
 /* Print long string to a lcd */
-int printLongString_LCD(char *pstring, size_t len)
+int printLongString_LCD(const char *pstring, const size_t len)
 {
 	size_t i;
 
@@ -406,7 +546,7 @@ int printLongString_LCD(char *pstring, size_t len)
 }
 
 /* Print short string to a lcd */
-int printString_LCD(char *pstring, size_t len)
+int printString_LCD(const char *pstring, const size_t len)
 {
 	unsigned char data[len+3];
 	size_t i;
@@ -431,7 +571,7 @@ int printString_LCD(char *pstring, size_t len)
 }
 
 /* Print distance to a lcd */
-static int printDistance_LCD(char *pstring, size_t len)
+static int printDistance_LCD(const char *pstring, const size_t len)
 {
 	unsigned char data[len+5];
 	size_t i;
@@ -470,7 +610,7 @@ int printDistance(const int distance)
 }
 
 /* Print float speed to a lcd */
-static int printSpeed_LCD(char *pstring, size_t len)
+static int printSpeed_LCD(const char *pstring, const size_t len)
 {
 	unsigned char data[len+7];
 	size_t i;
