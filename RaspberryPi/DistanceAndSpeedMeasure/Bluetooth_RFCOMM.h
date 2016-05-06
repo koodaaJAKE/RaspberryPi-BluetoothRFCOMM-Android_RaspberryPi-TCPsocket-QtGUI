@@ -21,6 +21,8 @@
 typedef enum { false, true } bool;
 
 #define NUMBER_OF_ADDRESSES 10
+#define LENGTH_OF_BLTADDR	18
+#define LENGTH_OF_BLTNAME	40
 
 #define FRAME_END_CHAR				   0xEE
 

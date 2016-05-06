@@ -18,15 +18,15 @@ int bluetoothRFCOMM_Client(thread_data_t *sensorData)
     int max_rsp, num_rsp;
     int dev_id, sock, len, flags;
     int i, UserInput;
-    char addr[18] = { 0 };
-    char addr_array[NUMBER_OF_ADDRESSES][19];
-    char name[248] = { 0 };
+    char bluetoothAddress[LENGTH_OF_BLTADDR] = { 0 };
+    char bluetoothAddressArray[NUMBER_OF_ADDRESSES][LENGTH_OF_BLTADDR];
+    char bluetoothDeviceName[LENGTH_OF_BLTNAME] = { 0 };
 
     /*
      * UUID:
      * 00001101-0000-1000-8000-00805F9B34FB
      */
-    uint8_t svc_uuid_int[] = { 0x00, 0x00, 0x11, 0x01, 0x00, 0x00, 0x10, 0x00,
+    const uint8_t svc_uuid_int[] = { 0x00, 0x00, 0x11, 0x01, 0x00, 0x00, 0x10, 0x00,
       0x80, 0x00, 0x00, 0x80, 0x5F, 0x9B, 0x34, 0xFB };
 
     /*************************************************************************/
@@ -86,19 +86,19 @@ int bluetoothRFCOMM_Client(thread_data_t *sensorData)
     if(num_rsp > 0)
     {
     	for (i = 0; i < num_rsp; i++) {
-    		ba2str(&(ii+i)->bdaddr, addr);
-    		memset(name, 0, sizeof(name));
+    		ba2str(&(ii+i)->bdaddr, bluetoothAddress);
+    		memset(bluetoothDeviceName, 0, sizeof(bluetoothDeviceName));
 
-    		if (hci_read_remote_name(sock, &(ii+i)->bdaddr, sizeof(name),
-    				name, 0) < 0)
-    			strcpy(name, "[unknown]");
+    		if (hci_read_remote_name(sock, &(ii+i)->bdaddr, sizeof(bluetoothDeviceName),
+    				bluetoothDeviceName, 0) < 0)
+    			strcpy(bluetoothDeviceName, "[unknown]");
 
     		/***************************************/
     		/* Copy the address string to an array */
     		/* of strings of addresses (2D array)  */
     		/***************************************/
-    		strcpy(addr_array[i], addr);
-    		printf("%d. Device: %s  %s \n", i+1, addr, name);
+    		strcpy(bluetoothAddressArray[i], bluetoothAddress);
+    		printf("%d. Device: %s  %s \n", i+1, bluetoothAddress, bluetoothDeviceName);
     	}
 
     	printf("\n*********************************************\n");
@@ -109,7 +109,7 @@ int bluetoothRFCOMM_Client(thread_data_t *sensorData)
         /*
          * Start the Bluetooth RFCOMM Client service and pass it the chosen Bluetooth device address
          */
-        bluetoothRFCOMM_ClientConnect(addr_array[UserInput-1], svc_uuid_int, sensorData);
+        bluetoothRFCOMM_ClientConnect(bluetoothAddressArray[UserInput-1], svc_uuid_int, sensorData);
     }
     else
     {
@@ -496,7 +496,7 @@ static sdp_session_t *registerService(const uint8_t rfcomm_channel)
 	* Regardless of the UUID used, it must match the one that the Jake's Android app is searching
 	* for.
 	*/
-	uint32_t svc_uuid_int[] = { 0x01110000, 0x00100000, 0x80000080, 0xFB349B5F };
+	const uint32_t svc_uuid_int[] = { 0x01110000, 0x00100000, 0x80000080, 0xFB349B5F };
 	const char *service_name = "Jake's RFCOMM Bluetooth server";
 	const char *svc_dsc = "A RFCOMM Bluetooth server that interfaces with the Jake's Android app";
 	const char *service_prov = "Jake";
