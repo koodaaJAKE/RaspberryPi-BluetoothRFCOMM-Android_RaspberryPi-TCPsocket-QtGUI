@@ -326,7 +326,7 @@ int printLongString_LCD(const char *pstring, const size_t len)
 			data[0] = 0x01;
 			for(i = 1 ; i < (len+1) ; i++)
 			{
-				data[i] = pstring[i-1];
+				data[i] = *pstring++;
 			}
 
 			data[len+1] = '\0';
@@ -353,7 +353,7 @@ int printLongString_LCD(const char *pstring, const size_t len)
 			data[0] = 0x01;
 			for(i = 1 ; i < 17 ; i++)
 			{
-				data[i] = pstring[i-1];
+				data[i] = *pstring++;
 			}
 
 			data[17] = '\0';
@@ -372,7 +372,7 @@ int printLongString_LCD(const char *pstring, const size_t len)
 			data2[0] = 0x01;
 			for(i = 1 ; i < (len-15) ; i++)
 			{
-				data2[i] = pstring[(i+16)-1];
+				data2[i] = *pstring++;
 			}
 
 			data2[(len-15)] = '\0';
@@ -400,7 +400,7 @@ int printLongString_LCD(const char *pstring, const size_t len)
 			data[0] = 0x01;
 			for(i = 1 ; i < 17 ; i++)
 			{
-				data[i] = pstring[i-1];
+				data[i] = *pstring++;
 			}
 
 			data[17] = '\0';
@@ -419,7 +419,7 @@ int printLongString_LCD(const char *pstring, const size_t len)
 			data2[0] = 0x01;
 			for(i = 1 ; i < 17 ; i++)
 			{
-				data2[i] = pstring[(i+16)-1];
+				data2[i] = *pstring++;
 			}
 
 			data2[17] = '\0';
@@ -438,7 +438,7 @@ int printLongString_LCD(const char *pstring, const size_t len)
 			data3[0] = 0x01;
 			for(i = 1 ; i < (len-31) ; i++)
 			{
-				data3[i] = pstring[(i+32)-1];
+				data3[i] = *pstring++;
 			}
 			data3[len-31] = '\0';
 			data3[len-31+1] = 0xFF;
@@ -466,7 +466,7 @@ int printLongString_LCD(const char *pstring, const size_t len)
 			data[0] = 0x01;
 			for(i = 1 ; i < 17 ; i++)
 			{
-				data[i] = pstring[i-1];
+				data[i] = *pstring++;
 			}
 
 			data[17] = '\0';
@@ -485,7 +485,7 @@ int printLongString_LCD(const char *pstring, const size_t len)
 			data2[0] = 0x01;
 			for(i = 1 ; i < 17 ; i++)
 			{
-				data2[i] = pstring[(i+16)-1];
+				data2[i] = *pstring++;
 			}
 
 			data2[17] = '\0';
@@ -504,7 +504,7 @@ int printLongString_LCD(const char *pstring, const size_t len)
 			data3[0] = 0x01;
 			for(i = 1 ; i < 17 ; i++)
 			{
-				data3[i] = pstring[(i+32)-1];
+				data3[i] = *pstring++;
 			}
 			data3[17] = '\0';
 			data3[18] = 0xFF;
@@ -522,7 +522,7 @@ int printLongString_LCD(const char *pstring, const size_t len)
 			data4[0] = 0x01;
 			for(i = 1 ; i < (len-47) ; i++)
 			{
-				data4[i] = pstring[(i+48)-1];
+				data4[i] = *pstring++;
 			}
 			data4[(len-47)] = '\0';
 			data4[(len-47)+1] = 0xFF;
@@ -554,7 +554,7 @@ int printString_LCD(const char *pstring, const size_t len)
 
 	for(i = 1 ; i < (len+1) ; i++)
 	{
-		data[i] = pstring[i-1];
+		data[i] = *pstring++;
 	}
 
 	data[len+1] = '\0';
@@ -579,7 +579,7 @@ static int printDistance_LCD(const char *pstring, const size_t len)
 
 	for(i = 1 ; i < (len+1) ; i++)
 	{
-		data[i] = pstring[i-1];
+		data[i] = *pstring++;
 	}
 
 	data[len+1] = 'm';
@@ -618,7 +618,7 @@ static int printSpeed_LCD(const char *pstring, const size_t len)
 
 	for(i = 1 ; i < (len+1) ; i++)
 	{
-		data[i] = pstring[i-1];
+		data[i] = *pstring++;
 	}
 
 	data[len+1] = 'k';
