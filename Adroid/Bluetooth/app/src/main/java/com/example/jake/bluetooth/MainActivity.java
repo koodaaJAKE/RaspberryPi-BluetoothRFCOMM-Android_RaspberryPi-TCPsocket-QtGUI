@@ -73,12 +73,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
     protected void onDestroy() {
         super.onDestroy();
 
-        // Make sure we're not doing discovery anymore
-        if (mBluetoothAdapter != null) {
+        /* Disable the bluetooth if it's on */
+        if (mBluetoothAdapter.isEnabled()) {
 
-            mBluetoothAdapter.cancelDiscovery();
+            if (mBluetoothAdapter.isDiscovering()){
+                mBluetoothAdapter.cancelDiscovery();
+            }
+            mBluetoothAdapter.disable();
         }
-
     }
 
     private void initialize() {
