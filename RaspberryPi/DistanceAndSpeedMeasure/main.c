@@ -48,25 +48,25 @@ int main(void)
 		fprintf(stderr, "Error - pthread_create() return code: %d\n", iret);
 		exit(EXIT_FAILURE);
 	}
-
+/*
 	iret1 = pthread_create(&TCP_SocketThread, NULL, TCP_Socket, (void*)sensorData);
 	if(iret1)
 	{
 		fprintf(stderr, "Error - pthread_create() return code: %d\n", iret1);
 		exit(EXIT_FAILURE);
 	}
-/*
+*/
 	iret2 = pthread_create(&bluetoothRFCOMMThread, NULL, bluetoothRFCOMM, (void*)sensorData);
 	if(iret2)
 	{
 		fprintf(stderr, "Error - pthread_create() return code: %d\n", iret2);
 		exit(EXIT_FAILURE);
 	}
-*/
+
 	/* Let the threads exit */
 	pthread_join(measureHRLVEZ0Thread, NULL);
-	pthread_join(TCP_SocketThread, NULL);
-	//pthread_join(bluetoothRFCOMMThread, NULL);
+	//pthread_join(TCP_SocketThread, NULL);
+	pthread_join(bluetoothRFCOMMThread, NULL);
 	printf("Threads closed!\n");
 
 	free(sensorData);

@@ -18,20 +18,23 @@
 #include <errno.h>
 #include "thread.h"
 
+#define NUMBER_OF_ADDRESSES 		10
+#define LENGTH_OF_BLTADDR			18
+#define LENGTH_OF_BLTNAME			40
+
+#define FRAME_END_CHAR				0xEE
+
 typedef enum { false, true } bool;
 
-#define NUMBER_OF_ADDRESSES 10
-#define LENGTH_OF_BLTADDR	18
-#define LENGTH_OF_BLTNAME	40
-
-#define FRAME_END_CHAR				   0xEE
-
 /* Bluetooth transfer messages */
-#define BLUETOOTH_SOCKET_CLOSE_COMMAND 0x01
-#define PRINT_HELLO					   0x02
-#define READ_HRLVEZ0_DATA			   0x03
-#define RANDOM_TEXT					   0x04
-#define CLEAR_SCREEN				   0x05
+typedef enum
+{
+	BLUETOOTH_SOCKET_CLOSE		   = 0x01,
+	PRINT_HELLO					   = 0x02,
+	READ_SENSOR_DATA			   = 0x03,
+	RANDOM_TEXT					   = 0x04,
+	CLEAR_SCREEN				   = 0x05,
+} BluetoothMessageCommand;
 
 /* Function prototypes */
 int bluetoothRFCOMM_Client(thread_data_t *sensorData);

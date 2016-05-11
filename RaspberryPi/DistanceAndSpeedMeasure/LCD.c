@@ -671,7 +671,8 @@ int printConnect(void)
 	char strng[] = "CONNECTED!!";
 	size_t l = strlen(strng);
 	printString_LCD(strng, l);
-
+	sleep(2);
+	clear_LCD();
 	return 0;
 }
 
@@ -681,7 +682,8 @@ int printDisconnect(void)
 	char strng[] = "DISCONNECTED!!";
 	size_t l = strlen(strng);
 	printString_LCD(strng, l);
-
+	sleep(2);
+	clear_LCD();
 	return 0;
 }
 
@@ -697,6 +699,8 @@ int printAlreadyConnected(void)
 	char strng2[] = "CONNECTED!";
 	l = strlen(strng2);
 	printString_LCD(strng2, l);
+	sleep(2);
+	clear_LCD();
 
 	return 0;
 }

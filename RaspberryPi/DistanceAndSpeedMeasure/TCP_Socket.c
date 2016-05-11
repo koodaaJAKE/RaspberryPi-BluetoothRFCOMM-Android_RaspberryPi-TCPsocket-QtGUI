@@ -15,9 +15,9 @@ int TCP_SocketPollingServer(thread_data_t *sensorData)
     int timeout, close_conn, rc;
     int end_server = FALSE, compress_array = FALSE;
     int socket_fd = -1, new_socket_fd = -1, len;
+    int nfds = 1, current_size = 0, i, j;
     unsigned char sendBuffer[BUFFERSIZE];
     unsigned char recvBuffer[1];
-    int nfds = 1, current_size = 0, i, j;
     unsigned char *serializationLengthPtr;
 
     /*************************************************************/
@@ -291,7 +291,6 @@ int TCP_SocketPollingServer(thread_data_t *sensorData)
                     case 'Q':
                     	printf("Disconnecting the socket connection...!\n");
                         printDisconnect();
-                        sleep(2);
                         close_conn = TRUE;
                         end_server = TRUE;
                         break;

@@ -12,6 +12,11 @@
 static int bluetoothRFCOMM_ClientConnect(const char *target_addr, const uint8_t svc_uuid_int[], thread_data_t *sensorData);
 static sdp_session_t *registerService(const uint8_t rfcomm_channel);
 
+/***********************************************************************************************/
+/* This function scans the nearby Bluetooth devices and lets the user choose which device      */
+/* connect to and then calls the actual Bluetooth client connect function and passes the       */
+/* chosen Bluetooth device address to it                                                       */
+/***********************************************************************************************/
 int bluetoothRFCOMM_Client(thread_data_t *sensorData)
 {
 	inquiry_info *ii = NULL;
@@ -71,20 +76,20 @@ int bluetoothRFCOMM_Client(thread_data_t *sensorData)
     /*************************************************************************/
     printf("Scanning.........\n");
     num_rsp = hci_inquiry(dev_id, len, max_rsp, NULL, &ii, flags);
-    if( num_rsp < 0 )
-    {
+    if( num_rsp < 0 ) {
     	perror("hci_inquiry error! \n");
     	exit(1);
     }
 
+    printf("\nDetected Bluetooth devices: \n");
     /******************************************************************************/
     /* Once a list of nearby Bluetooth devices and their addresses has been found,*/
     /* the program determines the user-friendly names associated with those       */
     /* addresses and presents them to the user. The hci_read_remote_name function */
     /* is used for this purpose.                                                  */
     /******************************************************************************/
-    if(num_rsp > 0)
-    {
+    if(num_rsp > 0) {
+
     	for (i = 0; i < num_rsp; i++) {
     		ba2str(&(ii+i)->bdaddr, bluetoothAddress);
     		memset(bluetoothDeviceName, 0, sizeof(bluetoothDeviceName));
@@ -111,8 +116,7 @@ int bluetoothRFCOMM_Client(thread_data_t *sensorData)
          */
         bluetoothRFCOMM_ClientConnect(bluetoothAddressArray[UserInput-1], svc_uuid_int, sensorData);
     }
-    else
-    {
+    else {
     	printf("No Bluetooth devices found\n");
     }
 
@@ -149,7 +153,7 @@ static int bluetoothRFCOMM_ClientConnect(const char *target_addr, const uint8_t 
     attrid_list = sdp_list_append( NULL, &range );
 
     //Get a list of service records that have UUID 0xabcd
-    if(sdp_service_search_attr_req( session, search_list, SDP_ATTR_REQ_RANGE, attrid_list, &response_list) < 0){
+    if(sdp_service_search_attr_req( session, search_list, SDP_ATTR_REQ_RANGE, attrid_list, &response_list) < 0) {
     	perror("SDP service search failed \n");
     	sdp_close(session);
     	return -1;
@@ -209,8 +213,7 @@ static int bluetoothRFCOMM_ClientConnect(const char *target_addr, const uint8_t 
 
     //Allocate a socket
     s = socket(AF_BLUETOOTH, SOCK_STREAM, BTPROTO_RFCOMM);
-    if(s < 0)
-    {
+    if(s < 0) {
     	perror("Error opening socket: \n");
     	return -1;
     }
@@ -221,37 +224,37 @@ static int bluetoothRFCOMM_ClientConnect(const char *target_addr, const uint8_t 
 
     //Connect to the server
     status = connect(s, (struct sockaddr *)&addr, sizeof(addr));
-    if(status < 0){
+    if(status < 0) {
     	perror("Couldn't connect\n");
     	return 1;
     }
     printf("Connected to socket: %d \n", s);
+    printConnect();
 
 	/*
 	 * Wait for data until the socketCloseFlag is set to end the transaction and close the socket connection
 	 */
-	while(socketCloseFlag == false)
-	{
+	while(!socketCloseFlag) {
+
 		unsigned char recvBuffer[128] = { 0 };
 		unsigned char sendBuffer[128] = { 0 };
 
 		printf("Waiting bytes to read.............\n");
 		bytes_read = read(s, recvBuffer, sizeof(recvBuffer));
-		if(bytes_read <= 0){
+		if(bytes_read <= 0) {
 			perror("read() failed: \n");
 			return 1;
 		}
 		else
 			printf("Bytes received: %d	command: %X\n", bytes_read, recvBuffer[0]);
 
-		switch(recvBuffer[0]){
+		switch(recvBuffer[0]) {
 
-			case BLUETOOTH_SOCKET_CLOSE_COMMAND:
+			case BLUETOOTH_SOCKET_CLOSE:
 
 				socketCloseFlag = true;
 				printDisconnect();
 				printf("Closing the socket...\n");
-				sleep(1);
 				break;
 
 			case PRINT_HELLO:
@@ -264,7 +267,7 @@ static int bluetoothRFCOMM_ClientConnect(const char *target_addr, const uint8_t 
 				clear_LCD();
 				break;
 
-			case READ_HRLVEZ0_DATA:
+			case READ_SENSOR_DATA:
 
 				/* Serialize data before sending it through socket */
 				pthread_mutex_lock(&sensorData->mutex);
@@ -272,17 +275,16 @@ static int bluetoothRFCOMM_ClientConnect(const char *target_addr, const uint8_t 
 				pthread_mutex_unlock(&sensorData->mutex);
 				sendBuffer[12] = FRAME_END_CHAR;
 				bytes_sent = write(s, sendBuffer, serializationPtr - sendBuffer + 1);
-				if(bytes_sent <= 0)
-				{
+				if(bytes_sent <= 0) {
 					perror("Write failed!\n");
 					socketCloseFlag = true;
 					break;
 				}
-				else{
+				else {
 					printf("Bytes sent: %d\n", bytes_sent);
 
 					int k;
-					for(k = 0 ; k <= 13 ; k++){
+					for(k = 0 ; k <= 13 ; k++) {
 						printf("buf[%d]: %X \t", k, sendBuffer[k]);
 					}
 					printf("\n");
@@ -295,7 +297,7 @@ static int bluetoothRFCOMM_ClientConnect(const char *target_addr, const uint8_t 
 			case RANDOM_TEXT:
 
 				bytes_read = read(s, recvBuffer, sizeof(recvBuffer));
-				if(bytes_read <= 0){
+				if(bytes_read <= 0) {
 					perror("read() failed: \n");
 					socketCloseFlag = true;
 				}
@@ -304,7 +306,7 @@ static int bluetoothRFCOMM_ClientConnect(const char *target_addr, const uint8_t 
 
 					/* Print it to a LCD screen */
 					printLongString_LCD((char*)recvBuffer, bytes_read);
-					if(bytes_read < 32){
+					if(bytes_read < 32) {
 						sleep(1);
 					}
 					else
@@ -326,88 +328,119 @@ static int bluetoothRFCOMM_ClientConnect(const char *target_addr, const uint8_t 
 
 int bluetoothRFCOMM_Server(thread_data_t *sensorData)
 {
-	int port = 3, result, sock, client, bytes_read, bytes_sent;
+	int port = 3, result, sock, client, bytes_read, bytes_sent, retValue;
 	struct sockaddr_rc loc_addr = { 0 }, rem_addr = { 0 };
 	char buffer[1024] = { 0 };
 	socklen_t opt = sizeof(rem_addr);
 	bool socketCloseFlag = false;
 	unsigned char *serializationPtr;
 
-	//Local Bluetooth adapter
+	/* Set the timeout value to 30 seconds for the select function */
+    struct timeval timeOut;
+    timeOut.tv_sec = 30;
+    timeOut.tv_usec = 0;
+
+    /* Initialize the fd set for the select function */
+    fd_set readFD, writeFD;
+    FD_ZERO(&readFD);
+    FD_ZERO(&writeFD);
+
+	/* Local Bluetooth adapter */
 	loc_addr.rc_family = AF_BLUETOOTH;
 	loc_addr.rc_bdaddr = *BDADDR_ANY;
 	loc_addr.rc_channel = (uint8_t) port;
 
-	//Register service
+	/* Register service */
 	sdp_session_t *session = registerService(port);
 
-	//Allocate socket
+	/* Allocate socket */
 	sock = socket(AF_BLUETOOTH, SOCK_STREAM, BTPROTO_RFCOMM);
-	if(sock < 0)
-	{
+	if(sock < 0) {
 		perror("Error opening socket: \n");
 		return -1;
 	}
 	printf("socket() returned %d\n", sock);
 
-	//Bind socket to port 3 of the first available
+	/* Set the socket to be non-blocking */
+	int flags = fcntl(sock, F_GETFL, 0);
+	fcntl(sock, F_SETFL, flags | O_NONBLOCK);
+
+	/* Bind socket to port 3 of the first available */
 	result = bind(sock, (struct sockaddr *)&loc_addr, sizeof(loc_addr));
-	if(result < 0)
-	{
+	if(result < 0) {
 		perror("Binding error: \n");
 		return -1;
 	}
 	printf("bind() on channel %d returned %d\n", port, result);
 
-	//Put socket into listening mode
+	/* Put socket into listening mode */
 	result = listen(sock, 1);
-	if(result < 0)
-	{
+	if(result < 0) {
 		perror("Listening error: \n");
 		return -1;
 	}
 	printf("listen() returned %d\n", result);
 
-	//Accept one connection
+	/* Accept one connection */
 	printf("Waiting for client to connect...\n");
+
+	/* Set the current socket fd to the fd set and call select */
+	FD_SET(sock, &readFD);
+	FD_SET(sock, &writeFD);
+
+	retValue = select(sock+1, &readFD, &writeFD, NULL, &timeOut);
+	if(retValue == -1) {
+		perror("select() error: \n");
+		return -1;
+	}
+	else if(retValue)
+		printf("Connected\n");
+	else {
+		printf("Connection attempt timed out\n");
+		return -1;
+	}
+
 	client = accept(sock, (struct sockaddr *)&rem_addr, &opt);
-	if(client < 0)
-	{
+	if(client < 0 && errno != EINPROGRESS) {
 		perror("Couldn't accept connection: \n");
 		return -1;
 	}
-	printf("accept() returned %d\n", client);
+
+	if(client >= 0) {
+		printf("accept() returned %d\n", client);
+	}
 
 	ba2str(&rem_addr.rc_bdaddr, buffer);
 	fprintf(stderr, "Accepted connection from %s\n", buffer);
 	memset(buffer, 0, sizeof(buffer));
+	printConnect();
 
+	/* Set it back to blocking mode */
+	fcntl(sock, F_SETFL, flags &~ O_NONBLOCK);
 
 	/*
 	 * Wait for data until the socketCloseFlag is set to end the transaction and close the socket connection
 	 */
-	while(socketCloseFlag == false)
-	{
+	while(!socketCloseFlag) {
 		unsigned char recvBuffer[128] = { 0 };
 		unsigned char sendBuffer[128] = { 0 };
 
 		printf("Waiting bytes to read.............\n");
 		bytes_read = read(client, recvBuffer, sizeof(recvBuffer));
-		if(bytes_read <= 0){
+		if(bytes_read <= 0) {
 			perror("read() failed: \n");
 			break;
 		}
 		else
 			printf("Bytes received: %d	command: %X\n", bytes_read, recvBuffer[0]);
 
-		switch(recvBuffer[0]){
+		switch(recvBuffer[0]) {
 
-			case BLUETOOTH_SOCKET_CLOSE_COMMAND:
+			case BLUETOOTH_SOCKET_CLOSE:
 
 				socketCloseFlag = true;
 				printDisconnect();
 				printf("Closing the socket...\n");
-				sleep(1);
 				break;
 
 			case PRINT_HELLO:
@@ -420,7 +453,7 @@ int bluetoothRFCOMM_Server(thread_data_t *sensorData)
 				clear_LCD();
 				break;
 
-			case READ_HRLVEZ0_DATA:
+			case READ_SENSOR_DATA:
 
 				/* Serialize data before sending it through socket */
 				pthread_mutex_lock(&sensorData->mutex);
@@ -428,8 +461,7 @@ int bluetoothRFCOMM_Server(thread_data_t *sensorData)
 				pthread_mutex_unlock(&sensorData->mutex);
 				sendBuffer[12] = FRAME_END_CHAR;
 				bytes_sent = write(client, sendBuffer, serializationPtr - sendBuffer + 1);
-				if(bytes_sent <= 0)
-				{
+				if(bytes_sent <= 0) {
 					perror("Write failed!\n");
 					socketCloseFlag = true;
 					break;
@@ -438,7 +470,7 @@ int bluetoothRFCOMM_Server(thread_data_t *sensorData)
 					printf("Bytes sent: %d\n", bytes_sent);
 					int k;
 
-					for(k = 0 ; k < 13 ; k++){
+					for(k = 0 ; k < 13 ; k++) {
 						printf("buf[%d]: %X \t",k, sendBuffer[k]);
 					}
 					printf("\n");
@@ -451,7 +483,7 @@ int bluetoothRFCOMM_Server(thread_data_t *sensorData)
 			case RANDOM_TEXT:
 
 				bytes_read = read(client, recvBuffer, sizeof(recvBuffer));
-				if(bytes_read <= 0){
+				if(bytes_read <= 0) {
 					perror("read() failed: \n");
 					socketCloseFlag = true;
 				}
@@ -460,7 +492,7 @@ int bluetoothRFCOMM_Server(thread_data_t *sensorData)
 
 					/* Print it to a LCD screen */
 					printLongString_LCD((char*)recvBuffer, bytes_read);
-					if(bytes_read < 32){
+					if(bytes_read < 32) {
 						sleep(1);
 					}
 					else
