@@ -5,7 +5,6 @@
 #ifndef SERIALIZEDESERIALIZE_H_
 #define SERIALIZEDESERIALIZE_H_
 
-#include <stdio.h>
 #include "thread.h"
 
 /* Macros for serializing 32bit float */

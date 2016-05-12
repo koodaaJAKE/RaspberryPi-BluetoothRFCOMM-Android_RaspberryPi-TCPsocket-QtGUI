@@ -6,7 +6,6 @@
 #define THREAD_H_
 
 #include <pthread.h>
-#include <stdio.h>
 #include <signal.h>
 #include "HRLVEZ0.h"
 

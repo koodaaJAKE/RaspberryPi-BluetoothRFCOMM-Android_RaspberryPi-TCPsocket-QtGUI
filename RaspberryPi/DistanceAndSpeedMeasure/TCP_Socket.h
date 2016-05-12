@@ -5,16 +5,10 @@
 #ifndef TCP_SOCKET_H_
 #define TCP_SOCKET_H_
 
-#include <sys/types.h>
-#include <sys/socket.h>
 #include <sys/poll.h>
 #include <sys/ioctl.h>
-#include <netinet/in.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <arpa/inet.h>
-#include <unistd.h>
+#include <errno.h>
 #include "HRLVEZ0.h"
 #include "thread.h"
 

@@ -11,7 +11,6 @@
 #include <termios.h> //Used for UART
 #include <stdlib.h>
 #include <string.h>
-#include <errno.h>
 
 /* Function prototypes */
 int setupLCD_Serial(void);

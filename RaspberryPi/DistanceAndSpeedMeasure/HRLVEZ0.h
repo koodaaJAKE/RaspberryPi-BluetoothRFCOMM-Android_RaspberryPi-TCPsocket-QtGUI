@@ -5,13 +5,7 @@
 #ifndef HRLVEZ0_H_
 #define HRLVEZ0_H_
 
-#include <stdio.h>
-#include <unistd.h> //Used for UART
-#include <fcntl.h> //Used for UART
-#include <termios.h> //Used for UART
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
+#include "LCD.h"
 
 /* Structure for the HRLVEZ0 raw distance data reading */
 typedef struct data_frame

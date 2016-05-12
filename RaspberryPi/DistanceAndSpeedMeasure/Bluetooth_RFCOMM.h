@@ -5,10 +5,6 @@
 #ifndef BLUETOOTH_RFCOMM_H_
 #define BLUETOOTH_RFCOMM_H_
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/socket.h>
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/hci.h>
 #include <bluetooth/hci_lib.h>

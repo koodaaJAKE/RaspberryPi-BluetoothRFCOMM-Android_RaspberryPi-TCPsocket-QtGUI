@@ -4,7 +4,6 @@
 
 #include "LCD.h"
 #include "HRLVEZ0.h"
-#include <signal.h>
 #include "Bluetooth_RFCOMM.h"
 #include "thread.h"
 

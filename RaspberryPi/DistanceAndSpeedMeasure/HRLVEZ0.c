@@ -5,8 +5,6 @@
  */
 
 #include "HRLVEZ0.h"
-#include "LCD.h"
-#include "TCP_Socket.h"
 
 /* Static global variable of serial file descriptor */
 static int uart0_filestream;
