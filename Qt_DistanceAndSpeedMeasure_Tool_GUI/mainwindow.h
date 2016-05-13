@@ -33,6 +33,9 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    bool m_checkConnectionStatus;
+
+    HRLVEZ0_Data_t m_Data;
 };
 
 #endif // MAINWINDOW_H

@@ -1,7 +1,5 @@
 #include "TCP_SocketClient.h"
 
-int m_sock_fd = -1;
-
 TCP_SocketClient::TCP_SocketClient()
 {
     m_port = PORT_NUMBER;

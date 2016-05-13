@@ -2,11 +2,10 @@
 #include "ui_mainwindow.h"
 #include "TCP_SocketClient.h"
 
-int g_CheckConnectionStatus = 1;
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    m_checkConnectionStatus ( false )
 {
     ui->setupUi(this);
     connect(ui->DistanceButton, SIGNAL(clicked()), ui->lcdDistance, SLOT(setDecMode()));
@@ -22,48 +21,39 @@ MainWindow::~MainWindow()
 
 int MainWindow::on_DistanceSpeedButton_clicked()
 {
-    /*HRLVEZ0 data structure*/
-    HRLVEZ0_Data_t Data;
-
-    if(TCP_SocketClient::SendAndReceiveSocketData(&Data) == false)
+    if(TCP_SocketClient::SendAndReceiveSocketData(&m_Data) == false)
     {
         std::cout << "Couldn't receive the distance data!\n" << std::endl;
         return 1;
     }
 
-    ui->lcdDistance_2->display(Data.distance);
-    ui->lcdSpeed_2->display(QString::number(Data.speed, 'f', 2));
+    ui->lcdDistance_2->display(m_Data.distance);
+    ui->lcdSpeed_2->display(QString::number(m_Data.speed, 'f', 2));
     return 0;
 }
 
 int MainWindow::on_DistanceButton_clicked()
 {
-    /*HRLVEZ0 data structure*/
-    HRLVEZ0_Data_t Data;
-
-    if(TCP_SocketClient::SendAndReceiveSocketData(&Data) == false)
+    if(TCP_SocketClient::SendAndReceiveSocketData(&m_Data) == false)
     {
         std::cout << "Couldn't receive the distance data!\n" << std::endl;
         return 1;
     }
 
-    ui->lcdDistance->display(Data.distance);
+    ui->lcdDistance->display(m_Data.distance);
     return 0;
 }
 
 int MainWindow::on_SpeedButton_clicked()
 {
-    /*HRLVEZ0 data structure*/
-    HRLVEZ0_Data_t Data;
-
-    if(TCP_SocketClient::SendAndReceiveSocketData(&Data) == false)
+    if(TCP_SocketClient::SendAndReceiveSocketData(&m_Data) == false)
     {
         std::cout << "Couldn't receive the speed data!\n" << std::endl;
         return 1;
     }
 
     /* Set to 2 decimal precision and print it to the lcd*/
-    ui->lcdSpeed->display(QString::number(Data.speed, 'f', 2));
+    ui->lcdSpeed->display(QString::number(m_Data.speed, 'f', 2));
     return 0;
 }
 
@@ -83,7 +73,7 @@ int MainWindow::on_QuitButton_clicked()
 int MainWindow::on_ConnectButton_clicked()
 {
     /* Check if already connected */
-    if(g_CheckConnectionStatus == 1)
+    if(!m_checkConnectionStatus)
     {
         if(TCP_SocketClient::CreateSocket() == false)
         {
@@ -127,7 +117,7 @@ int MainWindow::on_ConnectButton_clicked()
         return 0;
     }
 
-    g_CheckConnectionStatus = 2;
+    m_checkConnectionStatus = true;
 
     return 0;
 }

@@ -15,7 +15,7 @@
 #include <netdb.h>
 #include <errno.h>
 
-//Macro for deserializing float
+/* Macro for deserializing float */
 #define Deserialize754_32(i) (Deserialize754Float((i), 32, 8))
 
 #define ADDRESS "10.42.0.2"
@@ -23,10 +23,7 @@
 
 #define BUFFER_SIZE 12
 
-//Global socket file descriptor
-extern int m_sock_fd;
-
-//Structure of HRLVEZ0 sensor data coming through TCP socket
+/* Structure for the HRLVEZ0 sensor data coming through TCP socket */
 typedef struct HRLVEZ0_Data
 {
     int distance;
@@ -36,7 +33,9 @@ typedef struct HRLVEZ0_Data
 
 class TCP_SocketClient
 {
+
 public:
+
     TCP_SocketClient();
     ~TCP_SocketClient();
     bool CreateSocket();
@@ -48,12 +47,13 @@ public:
 
 
 private:
-    //Private methods
+
     float Deserialize754Float(unsigned int floatspeed, unsigned int bits, unsigned int expbits);
     unsigned int DeserializeIntSpeed(unsigned char *buf);
     unsigned int DeserializeIntDistance(unsigned char *buf);
     unsigned int DeserializeIntPrevDistance(unsigned char *buf);
 
+    int m_sock_fd;
     std::string m_address;
     int m_port;
     struct sockaddr_in m_server;
