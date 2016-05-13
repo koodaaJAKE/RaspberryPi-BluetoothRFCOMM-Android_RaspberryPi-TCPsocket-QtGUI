@@ -2,18 +2,12 @@
 #define TCP_SOCKETCLIENT_H
 
 #include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <string>
+#include <cstdio>
+#include <cstring>
 #include <sys/socket.h>
 #include <sys/types.h>
-#include <sys/poll.h>
-#include <netinet/in.h>
 #include <unistd.h>
 #include <arpa/inet.h>
-#include <netdb.h>
-#include <errno.h>
 
 /* Macro for deserializing float */
 #define Deserialize754_32(i) (Deserialize754Float((i), 32, 8))
