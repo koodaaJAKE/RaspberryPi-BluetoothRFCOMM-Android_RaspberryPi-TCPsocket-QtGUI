@@ -21,6 +21,9 @@ static int g_fd;
 /* Global static variable of bytes written */
 static int g_bytesWritten;
 
+/* Global static variable of length of string */
+static size_t stringLength = 0;
+
 /* Custom made characters */
 unsigned char aWithDots[8] = {
 	0b01010,
@@ -536,8 +539,8 @@ int printLongString_LCD(const char *pstring, const size_t len)
 		} else {
 			setCursor_LCD(2,1);
 			char tooLongString[] = "Too long string!";
-			size_t len = strlen(tooLongString);
-			printString_LCD(tooLongString, len);
+			stringLength = strlen(tooLongString);
+			printString_LCD(tooLongString, stringLength);
 			printf("Too long string\n");
 			sleep(2);
 		}
@@ -603,8 +606,8 @@ int printDistance(const int distance)
 	char dBuf[5];
 	snprintf(dBuf, sizeof(dBuf), "%d", distance);
 
-	size_t l = strlen(dBuf);
-	printDistance_LCD(dBuf, l);
+	stringLength = strlen(dBuf);
+	printDistance_LCD(dBuf, stringLength);
 
 	return 0;
 }
@@ -646,8 +649,8 @@ int printSpeed(const float speed)
 		char buf[7];
 		snprintf(buf, sizeof(buf), "%.2f", speed);
 
-		size_t l = strlen(buf);
-		printSpeed_LCD(buf, l);
+		stringLength = strlen(buf);
+		printSpeed_LCD(buf, stringLength);
 
 		return 0;
 	}
@@ -656,8 +659,8 @@ int printSpeed(const float speed)
 		char buf[6];
 		snprintf(buf, sizeof(buf), "%.2f", speed);
 
-		size_t l = strlen(buf);
-		printSpeed_LCD(buf, l);
+		stringLength = strlen(buf);
+		printSpeed_LCD(buf, stringLength);
 
 		return 0;
 	}
@@ -668,9 +671,9 @@ int printSpeed(const float speed)
 int printConnect(void)
 {
 	setCursor_LCD(2,3);
-	char strng[] = "CONNECTED!!";
-	size_t l = strlen(strng);
-	printString_LCD(strng, l);
+	const char *strng = "CONNECTED!!";
+	stringLength = strlen(strng);
+	printString_LCD(strng, stringLength);
 	sleep(2);
 	clear_LCD();
 	return 0;
@@ -679,9 +682,9 @@ int printConnect(void)
 int printDisconnect(void)
 {
 	setCursor_LCD(2,2);
-	char strng[] = "DISCONNECTED!!";
-	size_t l = strlen(strng);
-	printString_LCD(strng, l);
+	const char *strng = "DISCONNECTED!!";
+	stringLength = strlen(strng);
+	printString_LCD(strng, stringLength);
 	sleep(2);
 	clear_LCD();
 	return 0;
@@ -691,14 +694,14 @@ int printAlreadyConnected(void)
 {
 	clear_LCD();
 	setCursor_LCD(2,5);
-	char strng[] = "ALREADY";
-	size_t l = strlen(strng);
-	printString_LCD(strng, l);
+	const char *strng = "ALREADY";
+	stringLength = strlen(strng);
+	printString_LCD(strng, stringLength);
 
 	setCursor_LCD(3,4);
-	char strng2[] = "CONNECTED!";
-	l = strlen(strng2);
-	printString_LCD(strng2, l);
+	const char *strng2 = "CONNECTED!";
+	stringLength = strlen(strng2);
+	printString_LCD(strng2, stringLength);
 	sleep(2);
 	clear_LCD();
 
