@@ -15,17 +15,17 @@ static int createCapitalOwithDots(void);
 static int printSpeed_LCD(const char* pstring, const size_t len);
 static int printDistance_LCD(const char *pstring, const size_t len);
 
-/* Global static variable of serial file descriptor */
+/* Static local variable of serial file descriptor */
 static int g_fd;
 
-/* Global static variable of bytes written */
+/* Static local variable of bytes written */
 static int g_bytesWritten;
 
-/* Global static variable of length of string */
+/* Static local variable of length of string */
 static size_t stringLength = 0;
 
 /* Custom made characters */
-unsigned char aWithDots[8] = {
+static unsigned char aWithDots[8] = {
 	0b01010,
 	0b00000,
 	0b01110,
@@ -36,7 +36,7 @@ unsigned char aWithDots[8] = {
 	0b0000
 };
 
-unsigned char oWithDots[8] = {
+static unsigned char oWithDots[8] = {
 	0b01010,
 	0b00000,
 	0b01110,
@@ -47,7 +47,7 @@ unsigned char oWithDots[8] = {
 	0b00000
 };
 
-unsigned char capitalAwithDots[8] = {
+static unsigned char capitalAwithDots[8] = {
 	0b01010,
 	0b00000,
 	0b01110,
@@ -58,7 +58,7 @@ unsigned char capitalAwithDots[8] = {
 	0b10001
 };
 
-unsigned char capitalOwithDots[8] = {
+static unsigned char capitalOwithDots[8] = {
 	0b01010,
 	0b00000,
 	0b01110,
