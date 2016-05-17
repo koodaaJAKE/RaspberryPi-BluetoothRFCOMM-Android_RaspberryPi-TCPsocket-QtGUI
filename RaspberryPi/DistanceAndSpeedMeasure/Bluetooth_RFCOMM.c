@@ -127,7 +127,7 @@ int bluetoothRFCOMM_Client(thread_data_t *sensorData)
 
 static int bluetoothRFCOMM_ClientConnect(const char *target_addr, const uint8_t svc_uuid_int[], thread_data_t *sensorData)
 {
-	int bytes_read, bytes_sent, s, channel, status;
+	int bytes_read, bytes_sent, s, channel = 0, status = 0;
     uuid_t svc_uuid;
     sdp_list_t *response_list = NULL, *search_list, *attrid_list;
     sdp_session_t *session = 0;

@@ -27,5 +27,4 @@ void *measureHRLVEZ0(void *arg);
 void *TCP_Socket(void *arg);
 void *bluetoothRFCOMM(void *arg);
 
-
 #endif /* THREAD_H_ */
