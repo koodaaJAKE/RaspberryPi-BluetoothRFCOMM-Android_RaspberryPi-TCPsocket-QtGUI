@@ -1,10 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "TCP_SocketClient.h"
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow),
+    QMainWindow ( parent ),
+    ui ( new Ui::MainWindow ),
     m_checkConnectionStatus ( false )
 {
     ui->setupUi(this);
@@ -21,7 +20,7 @@ MainWindow::~MainWindow()
 
 int MainWindow::on_DistanceSpeedButton_clicked()
 {
-    if(TCP_SocketClient::SendAndReceiveSocketData(&m_Data) == false)
+    if(tcpSocketClient.SendAndReceiveSocketData(&m_Data) == false)
     {
         std::cout << "Couldn't receive the distance data!\n" << std::endl;
         return 1;
@@ -34,7 +33,7 @@ int MainWindow::on_DistanceSpeedButton_clicked()
 
 int MainWindow::on_DistanceButton_clicked()
 {
-    if(TCP_SocketClient::SendAndReceiveSocketData(&m_Data) == false)
+    if(tcpSocketClient.SendAndReceiveSocketData(&m_Data) == false)
     {
         std::cout << "Couldn't receive the distance data!\n" << std::endl;
         return 1;
@@ -46,7 +45,7 @@ int MainWindow::on_DistanceButton_clicked()
 
 int MainWindow::on_SpeedButton_clicked()
 {
-    if(TCP_SocketClient::SendAndReceiveSocketData(&m_Data) == false)
+    if(tcpSocketClient.SendAndReceiveSocketData(&m_Data) == false)
     {
         std::cout << "Couldn't receive the speed data!\n" << std::endl;
         return 1;
@@ -59,7 +58,7 @@ int MainWindow::on_SpeedButton_clicked()
 
 int MainWindow::on_QuitButton_clicked()
 {
-    if(TCP_SocketClient::SendQuitCommand() == false)
+    if(tcpSocketClient.SendQuitCommand() == false)
     {
         std::cout << "Couldn't sent the quit command!\n" << std::endl;
         return 1;
@@ -75,13 +74,13 @@ int MainWindow::on_ConnectButton_clicked()
     /* Check if already connected */
     if(!m_checkConnectionStatus)
     {
-        if(TCP_SocketClient::CreateSocket() == false)
+        if(tcpSocketClient.CreateSocket() == false)
         {
             std::cout << "Couldn't connect to the socket!\n" << std::endl;
             return 1;
         }
 
-        if(TCP_SocketClient::SendConnectCommand() == false)
+        if(tcpSocketClient.SendConnectCommand() == false)
         {
             std::cout << "Couldn't send the connect command!\n" << std::endl;
             return 1;
@@ -89,7 +88,7 @@ int MainWindow::on_ConnectButton_clicked()
 
         sleep(2);
 
-        if(TCP_SocketClient::SendClearLCD_Command() == false)
+        if(tcpSocketClient.SendClearLCD_Command() == false)
         {
             std::cout << "Couldn't clear the LCD screen!\n" << std::endl;
             return 1;
@@ -100,7 +99,7 @@ int MainWindow::on_ConnectButton_clicked()
     {
         std::cout << "Already connected!\n" << std::endl;
 
-        if(TCP_SocketClient::SendAlreadyConnectedCommand() == false)
+        if(tcpSocketClient.SendAlreadyConnectedCommand() == false)
         {
             std::cout << "Couldn't send already connected command!\n" << std::endl;
             return 1;
@@ -108,7 +107,7 @@ int MainWindow::on_ConnectButton_clicked()
 
         sleep(1);
 
-        if(TCP_SocketClient::SendClearLCD_Command() == false)
+        if(tcpSocketClient.SendClearLCD_Command() == false)
         {
             std::cout << "Couldn't clear the LCD screen!\n" << std::endl;
             return 1;
@@ -130,7 +129,7 @@ int MainWindow::on_ClearScreenButton_clicked()
     ui->lcdSpeed->display(0);
     ui->lcdSpeed_2->display(0);
 
-    if(TCP_SocketClient::SendClearLCD_Command() == false)
+    if(tcpSocketClient.SendClearLCD_Command() == false)
     {
         std::cout << "Couldn't clear the LCD screen!\n" << std::endl;
         return 1;

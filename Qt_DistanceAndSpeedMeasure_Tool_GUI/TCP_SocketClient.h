@@ -50,18 +50,10 @@ private:
     int m_sock_fd;
     std::string m_address;
     int m_port;
-    struct sockaddr_in m_server;
 
     unsigned char m_recvBuf[BUFFER_SIZE];
     unsigned char m_sendBuf[1];
-    unsigned int m_IntSpeed;
-
-    float m_result;
-    int m_shift;
-    unsigned int m_bias;
-    unsigned int m_significantbits;
-
-    unsigned int m_value;
+    unsigned int m_deserializedInt;
 };
 
 #endif // TCP_SOCKETCLIENT_H

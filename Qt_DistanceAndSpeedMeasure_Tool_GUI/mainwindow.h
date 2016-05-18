@@ -10,7 +10,7 @@ class MainWindow;
 
 extern int g_CheckConnectionStatus;
 
-class MainWindow : public QMainWindow, public TCP_SocketClient
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
@@ -35,6 +35,9 @@ private:
     Ui::MainWindow *ui;
     bool m_checkConnectionStatus;
 
+    /* Object of TCP_SocketClient class */
+    TCP_SocketClient tcpSocketClient;
+    /* Structure for the sensor data */
     HRLVEZ0_Data_t m_Data;
 };
 
