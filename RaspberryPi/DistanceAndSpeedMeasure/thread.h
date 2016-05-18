@@ -9,9 +9,6 @@
 #include <signal.h>
 #include "HRLVEZ0.h"
 
-//Flag to terminate the thread loop
-extern volatile sig_atomic_t thread_loop_flag;
-
 typedef struct thread_data
 {
 	long distance;
@@ -22,6 +19,7 @@ typedef struct thread_data
 }thread_data_t;
 
 /* Function prototypes */
+void sigHandler(int sig);
 int initializeMutex(thread_data_t *init_mutex_t);
 void *measureHRLVEZ0(void *arg);
 void *TCP_Socket(void *arg);

@@ -6,6 +6,16 @@
 #include "TCP_Socket.h"
 #include "Bluetooth_RFCOMM.h"
 
+/* Local flag for terminate the thread loops */
+static volatile sig_atomic_t thread_loop_flag;
+
+void sigHandler(int sig)
+{
+	printf("I got the signal..exiting\n!");
+	//Set the flag to exit thread loops
+	thread_loop_flag = 1;
+}
+
 int initializeMutex(thread_data_t *init_mutex_t)
 {
 	int res;

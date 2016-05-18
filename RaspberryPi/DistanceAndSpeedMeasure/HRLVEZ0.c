@@ -6,7 +6,7 @@
 
 #include "HRLVEZ0.h"
 
-/* Static local variable of serial file descriptor */
+/* Static global variable of serial file descriptor */
 static int uart0_filestream;
 
 int setupHRLVEZ0_Serial(void)
