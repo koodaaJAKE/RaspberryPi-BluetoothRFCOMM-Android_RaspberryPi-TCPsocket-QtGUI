@@ -13,6 +13,10 @@ int main(void)
 	/* Thread sensor data structure */
 	thread_data_t *sensorData;
 	sensorData = malloc(sizeof(thread_data_t));
+	if(sensorData == NULL){
+		perror("malloc error: \n");
+		return -1;
+	}
 
 	/* Initialize the signal handler */
 	signal(SIGINT, sigHandler);
