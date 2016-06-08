@@ -23,7 +23,7 @@ int main(void)
 	mySqlConstants p_mySqlConstants = {
 		.HOST = "localhost",
 		.USER = "root",
-		.PASSWORD = "hiiri69",
+		.PASSWORD = "*******",
 		.DATABASE = "jakenDB"
 	};
 
