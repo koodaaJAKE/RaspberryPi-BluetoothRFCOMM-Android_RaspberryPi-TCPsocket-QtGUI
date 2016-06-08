@@ -41,26 +41,22 @@ unsigned int Serialize754Float(float f, unsigned int bits, unsigned int expbits)
     if (f == 0.0) return 0; // get this special case out of the way
 
     // check sign and begin normalization
-    if (f < 0)
-    {
+    if (f < 0) {
     	sign = 1;
     	fnorm = -f;
     }
-    else
-    {
+    else {
     	sign = 0;
     	fnorm = f;
     }
 
     // get the normalized form of f and track the exponent
     shift = 0;
-    while(fnorm >= 2.0)
-    {
+    while(fnorm >= 2.0) {
     	fnorm /= 2.0;
     	shift++;
     }
-    while(fnorm < 1.0)
-    {
+    while(fnorm < 1.0) {
     	fnorm *= 2.0;
     	shift--;
     }
@@ -74,6 +70,38 @@ unsigned int Serialize754Float(float f, unsigned int bits, unsigned int expbits)
 
     // return the final answer
     return (sign<<(bits-1)) | (exp<<(bits-expbits-1)) | significand;
+}
+
+float Deserialize754Float(unsigned int f, unsigned int bits, unsigned int expbits)
+{
+	float result;
+	int shift;
+	unsigned int bias;
+	unsigned int significandbits = bits - expbits - 1; // -1 for sign bit
+
+	if (f == 0) return 0.0;
+
+    // pull the significant
+	result = (f&((1 <<significandbits)-1)); // mask
+	result /= (1 <<significandbits); // convert back to float
+	result += 1.0f; // add the one back on
+
+	// deal with the exponent
+	bias = (1<<(expbits-1)) - 1;
+	shift = ((f>>significandbits)&((1 <<expbits)-1)) - bias;
+	while(shift > 0) {
+		result *= 2.0;
+		shift--;
+	}
+	while(shift < 0) {
+		result /= 2.0;
+		shift++;
+	}
+
+	// sign it
+	result *= (f>>(bits-1))&1? -1.0: 1.0;
+
+	return result;
 }
 
 unsigned char *Serialize_Struct(unsigned char *buffer, const thread_data_t *Data)

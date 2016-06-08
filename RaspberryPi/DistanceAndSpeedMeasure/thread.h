@@ -24,5 +24,6 @@ int initializeMutex(thread_data_t *init_mutex_t);
 void *measureHRLVEZ0(void *arg);
 void *TCP_Socket(void *arg);
 void *bluetoothRFCOMM(void *arg);
+void *mySQL(void *arg);
 
 #endif /* THREAD_H_ */
