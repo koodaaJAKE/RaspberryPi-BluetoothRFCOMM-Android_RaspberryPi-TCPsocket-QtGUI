@@ -85,7 +85,9 @@ void *mySQL(void *arg)
 
 	while(!thread_loop_flag) {
 		thread_data_t *sensorData = (thread_data_t*)arg;
+		pthread_mutex_lock(&sensorData->mutex);
 		insertDataToTable(id, sensorData);
+		pthread_mutex_unlock(&sensorData->mutex);
 		id++;
 	}
 	pthread_exit(NULL);
